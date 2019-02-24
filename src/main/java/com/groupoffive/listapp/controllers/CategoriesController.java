@@ -1,10 +1,12 @@
 package com.groupoffive.listapp.controllers;
 
+import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUse;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.util.Set;
 
 public class CategoriesController {
@@ -27,6 +29,30 @@ public class CategoriesController {
         if (null == categoria) throw new CategoryNotFoundException();
 
         return categoria.getProdutos();
+    }
+
+    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUse {
+        if (this.categoryNameIsInUse(nome)) throw new CategoryNameAlreadyInUse();
+
+        Categoria categoria = new Categoria(nome);
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(categoria);
+        entityManager.getTransaction().commit();
+
+        return categoria;
+    }
+
+    private boolean categoryNameIsInUse(String nome) {
+        try {
+            Categoria categoria = entityManager.createQuery(
+                    "SELECT c from Categoria c WHERE c.nome = :nome", Categoria.class
+            ).setParameter("nome", nome).getSingleResult();
+
+            return null != categoria;
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
 }

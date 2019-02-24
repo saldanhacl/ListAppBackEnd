@@ -4,6 +4,7 @@ import com.groupoffive.listapp.AppConfig;
 import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.exceptions.ProductNameAlreadyInUseException;
+import com.groupoffive.listapp.exceptions.ProductNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
 
@@ -74,6 +75,20 @@ public class ProductsController {
         } catch (NoResultException e) {
             return false;
         }
+    }
+
+    public void removeProduct(int idProduto) throws ProductNotFoundException {
+        Produto produto = entityManager.find(Produto.class, idProduto);
+
+        if (null == produto) throw new ProductNotFoundException();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(produto);
+        entityManager.getTransaction().commit();
+    }
+
+    public void updateProduct(int idProduto, String nome, double preco, int idCategoria) {
+        
     }
 
 }

@@ -33,7 +33,7 @@ public class ProductsController {
 
         Produto produto = new Produto(nome, preco, categoria);
 
-        this.entityManager.getTransaction().begin();
+        if (!this.entityManager.getTransaction().isActive()) this.entityManager.getTransaction().begin();
         this.entityManager.persist(produto);
         this.entityManager.getTransaction().commit();
 

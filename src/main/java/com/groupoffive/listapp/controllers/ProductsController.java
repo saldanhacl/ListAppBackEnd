@@ -51,7 +51,7 @@ public class ProductsController {
      */
     public Produto addProduct(String nome, double preco, String nomeCategoria) throws ProductNameAlreadyInUseException, CategoryNameAlreadyInUseException {
         try {
-            Categoria categoria = AppConfig.getContext().getBean("categoriesController", CategoriesController.class).addCategory(nomeCategoria);
+            Categoria categoria = AppConfig.getContext().getBean("categoriesController", CategoriesController.class).addCategory(nomeCategoria, false);
             return this.addProduct(nome, preco, categoria.getId());
         } catch (CategoryNotFoundException e) {
             // Tenho muita fé de que isso não vai acontecer

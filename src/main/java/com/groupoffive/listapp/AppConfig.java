@@ -1,13 +1,7 @@
 package com.groupoffive.listapp;
 
-import com.groupoffive.listapp.controllers.CategoriesController;
-import com.groupoffive.listapp.controllers.GroupsController;
-import com.groupoffive.listapp.controllers.ListsController;
-import com.groupoffive.listapp.controllers.UsersController;
-import com.groupoffive.listapp.routers.CategoriesRouter;
-import com.groupoffive.listapp.routers.GroupsRouter;
-import com.groupoffive.listapp.routers.ListsRouter;
-import com.groupoffive.listapp.routers.UsersRouter;
+import com.groupoffive.listapp.controllers.*;
+import com.groupoffive.listapp.routers.*;
 import com.groupoffive.listapp.util.Crypt;
 import com.groupoffive.listapp.util.CryptSha256;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -53,6 +47,10 @@ public class AppConfig {
     public CategoriesRouter categoriesRouter() {
         return new CategoriesRouter(categoriesController());
     }
+    @Bean
+    public ProductsRouter productsRouter() {
+        return new ProductsRouter(productsController());
+    }
 
     @Bean
     public ListsController listsController() {
@@ -72,6 +70,11 @@ public class AppConfig {
     @Bean
     CategoriesController categoriesController() {
         return new CategoriesController(this.getEntityManager());
+    }
+
+    @Bean
+    ProductsController productsController() {
+        return new ProductsController(this.getEntityManager());
     }
 
 }

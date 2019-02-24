@@ -1,6 +1,6 @@
 package com.groupoffive.listapp.controllers;
 
-import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUse;
+import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
@@ -31,8 +31,14 @@ public class CategoriesController {
         return categoria.getProdutos();
     }
 
-    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUse {
-        if (this.categoryNameIsInUse(nome)) throw new CategoryNameAlreadyInUse();
+    /**
+     * Adiciona uma categoria com o nome informado.
+     * @param nome
+     * @return
+     * @throws CategoryNameAlreadyInUseException
+     */
+    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUseException {
+        if (this.categoryNameIsInUse(nome)) throw new CategoryNameAlreadyInUseException();
 
         Categoria categoria = new Categoria(nome);
 
@@ -43,6 +49,30 @@ public class CategoriesController {
         return categoria;
     }
 
+    /**
+     * Adiciona uma categoria com o nome informado.
+     * Somente realizará commit, caso a variável canCommit seja true.
+     * @param nome
+     * @return
+     * @throws CategoryNameAlreadyInUseException
+     */
+    Categoria addCategory(String nome, boolean canCommit) throws CategoryNameAlreadyInUseException {
+        if (this.categoryNameIsInUse(nome)) throw new CategoryNameAlreadyInUseException();
+
+        Categoria categoria = new Categoria(nome);
+
+        if (!entityManager.getTransaction().isActive()) entityManager.getTransaction().begin();
+        entityManager.persist(categoria);
+        if (canCommit) entityManager.getTransaction().commit();
+
+        return categoria;
+    }
+
+    /**
+     * Verifica se o nome informado para a categoria já está em uso.
+     * @param nome
+     * @return
+     */
     private boolean categoryNameIsInUse(String nome) {
         try {
             Categoria categoria = entityManager.createQuery(

@@ -1,7 +1,7 @@
 package com.groupoffive.listapp.routers;
 
 import com.groupoffive.listapp.controllers.CategoriesController;
-import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUse;
+import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
@@ -29,7 +29,7 @@ public class CategoriesRouter {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUse {
+    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUseException {
         return categoriesController.addCategory(nome);
     }
 

@@ -1,8 +1,8 @@
 package com.groupoffive.listapp.exceptions;
 
-public class CategoryNameAlreadyInUse extends Exception {
+public class CategoryNameAlreadyInUseException extends Exception {
 
-    public CategoryNameAlreadyInUse() {
+    public CategoryNameAlreadyInUseException() {
         super("O nome de categoria informado já está em uso.");
     }
 

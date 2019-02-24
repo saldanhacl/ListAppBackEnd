@@ -20,6 +20,15 @@ public class Categoria {
 
     public Categoria() {}
 
+    public Categoria(String nome) {
+        this.nome = nome;
+    }
+
+    public Categoria(String nome, Set<Produto> produtos) {
+        this.nome     = nome;
+        this.produtos = produtos;
+    }
+
     public int getId() {
         return id;
     }

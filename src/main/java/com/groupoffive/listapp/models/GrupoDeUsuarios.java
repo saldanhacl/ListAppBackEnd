@@ -23,6 +23,10 @@ public class GrupoDeUsuarios {
 
     public GrupoDeUsuarios() {}
 
+    public GrupoDeUsuarios(Set<Usuario> usuarios) {
+        this.usuarios = usuarios;
+    }
+
     public int getId() {
         return id;
     }

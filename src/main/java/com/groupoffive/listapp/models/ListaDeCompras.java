@@ -28,8 +28,13 @@ public class ListaDeCompras {
 
     public ListaDeCompras() {}
 
-    public ListaDeCompras(String name) {
-        this.setNome(nome);
+    public ListaDeCompras(String nome) {
+        this.nome = nome;
+    }
+
+    public ListaDeCompras(String nome, GrupoDeUsuarios grupoDeUsuarios) {
+        this.nome            = nome;
+        this.grupoDeUsuarios = grupoDeUsuarios;
     }
 
     public int getId() {

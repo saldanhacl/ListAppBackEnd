@@ -37,4 +37,19 @@ public class ProductsRouter {
     public void removeProduct(@PathVariable("id") int idProduto) throws ProductNotFoundException {
         productsController.removeProduct(idProduto);
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, params = { "nome", "preco", "idCategoria" })
+    @ResponseBody
+    public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, int idCategoria)
+            throws ProductNotFoundException, CategoryNotFoundException {
+        productsController.updateProduct(idProduto, nome, preco, idCategoria);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, params = { "nome", "preco", "nomeCategoria" })
+    @ResponseBody
+    public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, String nomeCategoria)
+            throws ProductNotFoundException, CategoryNameAlreadyInUseException {
+        productsController.updateProduct(idProduto, nome, preco, nomeCategoria);
+    }
+
 }

@@ -77,6 +77,11 @@ public class ProductsController {
         }
     }
 
+    /**
+     * Remove o produto informado.
+     * @param idProduto
+     * @throws ProductNotFoundException
+     */
     public void removeProduct(int idProduto) throws ProductNotFoundException {
         Produto produto = entityManager.find(Produto.class, idProduto);
 
@@ -87,8 +92,46 @@ public class ProductsController {
         entityManager.getTransaction().commit();
     }
 
-    public void updateProduct(int idProduto, String nome, double preco, int idCategoria) {
-        
+    /**
+     * Altera os dados de um produto. Atribui ele a uma categoria já existente.
+     * @param idProduto
+     * @param nome
+     * @param preco
+     * @param idCategoria
+     * @throws ProductNotFoundException
+     * @throws CategoryNotFoundException
+     */
+    public void updateProduct(int idProduto, String nome, double preco, int idCategoria)
+            throws ProductNotFoundException, CategoryNotFoundException {
+        Produto produto     = entityManager.find(Produto.class, idProduto);
+        Categoria categoria = entityManager.find(Categoria.class, idCategoria);
+
+        if (null == produto) throw new ProductNotFoundException();
+        if (null == categoria) throw new CategoryNotFoundException();
+
+        entityManager.getTransaction().begin();
+        produto.setNome(nome);
+        produto.setPreco(preco);
+        produto.setCategoria(categoria);
+        entityManager.getTransaction().commit();
+    }
+
+    /**
+     * Altera os dados de um produto. Atribui ele a uma nova categoria.
+     * @param nome
+     * @param preco
+     * @param nomeCategoria
+     * @return
+     * @throws ProductNameAlreadyInUseException
+     * @throws CategoryNameAlreadyInUseException
+     */
+    public void updateProduct(int idProduto, String nome, double preco, String nomeCategoria) throws ProductNotFoundException, CategoryNameAlreadyInUseException {
+        try {
+            Categoria categoria = AppConfig.getContext().getBean("categoriesController", CategoriesController.class).addCategory(nomeCategoria, false);
+            this.updateProduct(idProduto, nome, preco, categoria.getId());
+        } catch (CategoryNotFoundException e) {
+            // Tenho muita fé de que isso não vai acontecer
+        }
     }
 
 }

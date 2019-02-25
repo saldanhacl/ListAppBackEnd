@@ -99,4 +99,20 @@ public class CategoriesController {
         entityManager.getTransaction().commit();
     }
 
+    /**
+     * Atualiza os dados de uma categoria.
+     * @param idCategoria
+     * @param nome
+     * @throws CategoryNotFoundException
+     */
+    public void updateCategory(int idCategoria, String nome) throws CategoryNotFoundException {
+        Categoria categoria = entityManager.find(Categoria.class, idCategoria);
+
+        if (null == categoria) throw new CategoryNotFoundException();
+
+        entityManager.getTransaction().begin();
+        categoria.setNome(nome);
+        entityManager.getTransaction().commit();
+    }
+
 }

@@ -39,4 +39,10 @@ public class CategoriesRouter {
         categoriesController.removeCategory(idCategoria);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseBody
+    public void updateCategory(@PathVariable("id") int idCategoria, String nome) throws CategoryNotFoundException {
+        categoriesController.updateCategory(idCategoria, nome);
+    }
+
 }

@@ -85,4 +85,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Remove a categoria informada. Os produtos ficarão com idCategoria setado como null.
+     * @param idCategoria
+     */
+    public void removeCategory(int idCategoria) throws CategoryNotFoundException {
+        Categoria categoria = entityManager.find(Categoria.class, idCategoria);
+
+        if (null == categoria) throw new CategoryNotFoundException();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(categoria);
+        entityManager.getTransaction().commit();
+    }
+
 }

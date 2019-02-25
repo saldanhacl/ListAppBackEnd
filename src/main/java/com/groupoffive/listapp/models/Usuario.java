@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,9 +15,16 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    @NotNull
     private String nome;
+
+    @NotNull
     private String email;
+
+    @NotNull
     private String senha;
+
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "usuario_grupo",

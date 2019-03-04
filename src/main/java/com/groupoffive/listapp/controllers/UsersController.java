@@ -3,11 +3,15 @@ package com.groupoffive.listapp.controllers;
 import com.groupoffive.listapp.exceptions.EmailAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.IncorrectEmailOrPasswordException;
 import com.groupoffive.listapp.exceptions.NotFilledRequiredFieldsException;
+import com.groupoffive.listapp.exceptions.UserNotFoundException;
+import com.groupoffive.listapp.models.GrupoDeUsuarios;
 import com.groupoffive.listapp.models.Usuario;
 import com.groupoffive.listapp.util.Crypt;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UsersController {
 
@@ -17,6 +21,26 @@ public class UsersController {
     public UsersController(EntityManager entityManager, Crypt crypt) {
         this.entityManager = entityManager;
         this.crypt         = crypt;
+    }
+
+    /**
+     * Retorna os grupos aos quais um usuário está associado.
+     * @param usuario
+     * @return
+     * @throws UserNotFoundException caso o usuario solicitado nao esteja cadastrado ou nao esteja em algum grupo
+     */
+    private Set<GrupoDeUsuarios> getGroupsFromUser(Usuario usuario) throws UserNotFoundException {
+        if (null == usuario) throw new UserNotFoundException();
+
+        Set<GrupoDeUsuarios> grupos = new HashSet<>();
+        usuario.getGrupos().forEach(user_group -> grupos.add(user_group.getGrupo()));
+
+        return grupos;
+    }
+    public Set<GrupoDeUsuarios> getGroupsFromUser(int userId) throws UserNotFoundException {
+        Usuario usuario = entityManager.find(Usuario.class, userId);
+
+        return getGroupsFromUser(usuario);
     }
 
     /**

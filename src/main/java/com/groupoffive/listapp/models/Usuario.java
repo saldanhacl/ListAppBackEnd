@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,13 +29,8 @@ public class Usuario {
     @NotNull
     private String senha;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "usuario_grupo",
-            joinColumns = { @JoinColumn(name = "usuario_id") },
-            inverseJoinColumns = { @JoinColumn(name = "grupo_de_usuarios_id") }
-    )
-    private Set<GrupoDeUsuarios> gruposDeUsuarios = new HashSet<>();
+    @OneToMany(mappedBy = "id.user")
+    private Set<UsuarioGrupo> grupos = new HashSet<>();
 
     public Usuario() {}
 
@@ -62,13 +61,27 @@ public class Usuario {
     }
 
     @JsonIgnore
-    public Set<GrupoDeUsuarios> getGrupoDeUsuarios() {
-        return gruposDeUsuarios;
+    public Set<UsuarioGrupo> getGrupos() {
+        return grupos;
     }
 
     @JsonProperty
-    public void setGruposDeUsuarios(Set<GrupoDeUsuarios> gruposDeUsuarios) {
-        this.gruposDeUsuarios = gruposDeUsuarios;
+    public void setGrupos(Set<UsuarioGrupo> grupos) {
+        this.grupos = grupos;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return id == usuario.id &&
+                nome.equals(usuario.nome) &&
+                email.equals(usuario.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nome, email);
+    }
 }

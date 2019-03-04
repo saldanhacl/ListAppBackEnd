@@ -6,13 +6,14 @@ import com.groupoffive.listapp.exceptions.UserNotFoundException;
 import com.groupoffive.listapp.exceptions.UserNotInGroupException;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
 import com.groupoffive.listapp.models.Usuario;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import com.groupoffive.listapp.models.UsuarioGrupo;
+import com.groupoffive.listapp.models.UsuarioGrupoPK;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GroupsController {
@@ -24,33 +25,88 @@ public class GroupsController {
     }
 
     /**
-     * Retorna os grupos aos quais um usuário está associado.
-     * @param userId
-     * @return
+     * Retorna os grupos aos quais um usuario esta associado.
+     *
+     * @param usuario usuario que se deseja recuperar os grupos
+     * @return lista dos grupos que o usuario esta presente
+     *
      * @throws UserNotFoundException caso o usuario solicitado nao esteja cadastrado ou nao esteja em algum grupo
      */
+    private Set<GrupoDeUsuarios> getGroupsFromUser(Usuario usuario) throws UserNotFoundException {
+        if (null == usuario) throw new UserNotFoundException();
+
+        Set<GrupoDeUsuarios> grupos = new HashSet<>();
+        usuario.getGrupos().forEach(user_group -> grupos.add(user_group.getGrupo()));
+
+        return grupos;
+    }
     public Set<GrupoDeUsuarios> getGroupsFromUser(int userId) throws UserNotFoundException {
         Usuario usuario = entityManager.find(Usuario.class, userId);
 
-        if (null == usuario) throw new UserNotFoundException();
-
-        return usuario.getGrupoDeUsuarios();
+        return getGroupsFromUser(usuario);
     }
 
     /**
+     * Retorna os usuarios associados a um grupo.
      *
-     * CREATE GROUP
+     * @param group grupo que se deseja recuperar os usuarios
+     * @return lista dos usuarios presentes no grupo
+     *
+     * @throws GroupNotFoundException caso o grupo solicitado nao esteja cadastrado
+     */
+    private Set<Usuario> getUsersFromGroup(GrupoDeUsuarios group) throws GroupNotFoundException{
+        if(null == group) throw new GroupNotFoundException();
+
+        Set<Usuario> users = new HashSet<>();
+
+        group.getUsuarios().forEach(user_group -> {
+            users.add(user_group.getUsuario());
+        });
+
+        return users;
+    }
+    public Set<Usuario> getUsersFromGroup(int groupId) throws GroupNotFoundException {
+        GrupoDeUsuarios grupo = entityManager.find(GrupoDeUsuarios.class, groupId);
+
+        return getUsersFromGroup(grupo);
+    }
+
+    /**
+     * Metodo para recuperar um grupo especifico pelo seu id.
+     *
+     * @param groupId id do grupo que se deseja recuperar
+     * @return grupo que se deseja recuperar
+     *
+     * @throws GroupNotFoundException caso o grupo solicitado nao esteja cadastrado
+     */
+    public GrupoDeUsuarios getGroup(int groupId) throws GroupNotFoundException{
+        GrupoDeUsuarios group = entityManager.find(GrupoDeUsuarios.class, groupId);
+
+        if(group == null) throw new GroupNotFoundException();
+
+        return group;
+    }
+
+    /**
+     * Metodo para criar um grupo com os dados passados por parametro
+     *
+     * @param nome nomeação do grupo a ser criado
+     * @param criador usuario que criou o grupo
+     *
+     * @return grupo criado com os dados passados
+     *
+     * @throws UserNotFoundException caso o usuario solicitado nao esteja cadastrado
      */
     private GrupoDeUsuarios createGroup(String nome, Usuario criador) throws UserNotFoundException{
         if(criador == null) throw new UserNotFoundException();
 
         GrupoDeUsuarios group = new GrupoDeUsuarios(nome, criador);
+        UsuarioGrupo ug = new UsuarioGrupo(criador, group, true);
 
         entityManager.getTransaction().begin();
         entityManager.persist(group);
+        entityManager.persist(ug);
         entityManager.getTransaction().commit();
-
-        group.getCriador().getGrupoDeUsuarios().add(group);
 
         return group;
     }
@@ -70,22 +126,35 @@ public class GroupsController {
     }
 
     /**
+     * Metodo para adicionar um usuario a um grupo
      *
-     * ADD USER
+     * @param user usuario a ser inserido em um grupo
+     * @param group grupo que o usuario será inserido
+     *
+     * @return grupo com o usuario inserido
+     *
+     * @throws UserNotFoundException  caso o usuario solicitado nao esteja cadastrado
+     * @throws GroupNotFoundException caso o grupo solicitado nao esteja cadastrado
+     * @throws UserAlreadyInGroupException caso o usuario ja esteja inserido no respectivo grupo
      */
     private GrupoDeUsuarios addUserToGroup(Usuario user, GrupoDeUsuarios group) throws UserNotFoundException, GroupNotFoundException, UserAlreadyInGroupException{
         if(user == null) throw new UserNotFoundException();
         if(group == null) throw new GroupNotFoundException();
 
-        if(user.getGrupoDeUsuarios().contains(group)) throw new UserAlreadyInGroupException();
+        if(getUsersFromGroup(group).contains(user)) throw new UserAlreadyInGroupException();
 
-        group.getUsuarios().add(user);
+        boolean admin=false;
+
+        if(group.getCriador().equals(user)){
+            admin=true;
+        }
+
+        UsuarioGrupo ug = new UsuarioGrupo(user, group, admin);
 
         entityManager.getTransaction().begin();
         entityManager.persist(group);
+        entityManager.persist(ug);
         entityManager.getTransaction().commit();
-
-        user.getGrupoDeUsuarios().add(group);
 
         return group;
     }
@@ -103,25 +172,66 @@ public class GroupsController {
     }
 
     /**
-     * -- Melhorar logica:
-     * -- - Deletar grupo caso  fique 0 (zero) usuarios
-     * -- - Transferir admin caso o criador saia
+     * Metodo para remover um usuario de um grupo especifico
      *
-     * REMOVE USER
+     * @param user usuario a ser removido de um grupo
+     * @param group grupo que o usuario sera removido
+     *
+     * @return grupo sem o usuario que foi removido
+     *
+     * @throws UserNotFoundException  caso o usuario solicitado nao esteja cadastrado
+     * @throws GroupNotFoundException caso o grupo solicitado nao esteja cadastrado
+     * @throws UserNotInGroupException caso o usuario nao esteja inserido no respectivo grupo
      */
     private GrupoDeUsuarios removeUserFromGroup(Usuario user, GrupoDeUsuarios group) throws UserNotFoundException, GroupNotFoundException, UserNotInGroupException{
         if(user == null) throw new UserNotFoundException();
         if(group == null) throw new GroupNotFoundException();
 
-        if(!group.getUsuarios().contains(user)) throw new UserNotInGroupException();
+        Set<Usuario> users = getUsersFromGroup(group);
 
-        group.getUsuarios().remove(user);
+        if(!users.contains(user)) throw new UserNotInGroupException();
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(group);
-        entityManager.getTransaction().commit();
+        boolean hasAdmin=false;
 
-        user.getGrupoDeUsuarios().remove(group);
+        try {
+
+            UsuarioGrupo ug = entityManager.find(UsuarioGrupo.class, new UsuarioGrupoPK(user, group));
+
+            group.getUsuarios().remove(ug);
+            user.getGrupos().remove(ug);
+
+            entityManager.getTransaction().begin();
+            entityManager.remove(ug);
+            entityManager.getTransaction().commit();
+
+            if (group.getUsuarios().size() > 0) {
+
+                //Definir um usuario como admin, caso nao tenha algum outro
+                if (ug.isAdmin()) {
+                    for (UsuarioGrupo usuario : group.getUsuarios()) {
+                        if (usuario.isAdmin()) {
+                            hasAdmin = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasAdmin) {
+                        UsuarioGrupo bkp = (UsuarioGrupo) group.getUsuarios().toArray()[0];
+                        bkp.setAdmin(true);
+                    }
+                }
+
+                entityManager.getTransaction().begin();
+                entityManager.persist(group);
+                entityManager.getTransaction().commit();
+            } else {
+                //Deletar o grupo, caso nao tenha mais usuarios
+                deleteGroup(group);
+            }
+
+        }catch (Exception e){
+            //
+        }
 
         return group;
     }
@@ -138,31 +248,57 @@ public class GroupsController {
         return removeUserFromGroup(user, group);
     }
 
+    /**
+     *
+     * MAKE USER GROUP ADMIN
+     */
     public void makeUserGroupAdmin(){
 
     }
 
-    public void makeUserGroupOwner(){
-
-    }
-
     /**
+     * Metodo para deletar um grupo especifico
      *
-     *  DELETE GROUP
+     * @param group grupo que sera deletado
+     * @return grupo que foi deletado
+     *
+     * @throws GroupNotFoundException caso o grupo solicitado nao esteja cadastrado
      */
-    private GrupoDeUsuarios deleteGroup(GrupoDeUsuarios group) throws GroupNotFoundException{
+    private GrupoDeUsuarios deleteGroup(GrupoDeUsuarios group) throws GroupNotFoundException {
+
+        if (group == null) throw new GroupNotFoundException();
+
         try {
-            if (group == null) throw new GroupNotFoundException();
 
-            group.getUsuarios().forEach(user -> user.getGrupoDeUsuarios().remove(group));
+            List<UsuarioGrupo> associacoes = new ArrayList<>();
+            List<Usuario> usuarios = new ArrayList<>();
 
+            group.getUsuarios().forEach(user_group -> {
+                if(user_group.getGrupo().equals(group)){
+                    associacoes.add(user_group);
+                }
+            });
+
+            associacoes.forEach(user_group -> {
+                group.getUsuarios().remove(user_group);
+                user_group.getUsuario().getGrupos().remove(user_group);
+                usuarios.add(user_group.getUsuario());
+            });
+
+            entityManager.getTransaction().begin();
             group.setUsuarios(new HashSet<>());
+            usuarios.forEach(usuario -> {
+                UsuarioGrupo ug = entityManager.find(UsuarioGrupo.class, new UsuarioGrupoPK(usuario, group));
+
+                entityManager.remove(ug);
+            });
+            entityManager.getTransaction().commit();
 
             entityManager.getTransaction().begin();
             entityManager.remove(group);
             entityManager.getTransaction().commit();
         }catch (Exception e){
-            return null;
+            //
         }
 
         return group;
@@ -173,6 +309,12 @@ public class GroupsController {
         return deleteGroup(group);
     }
 
+    /**
+     * Metodo para buscar um usuario especifico pelo nome
+     *
+     * @param nome nome do usuario que deseja buscar
+     * @return usuario encontrado
+     */
     private Usuario getUserByName(String nome){
         try{
 
@@ -182,6 +324,4 @@ public class GroupsController {
             return null;
         }
     }
-
-
 }

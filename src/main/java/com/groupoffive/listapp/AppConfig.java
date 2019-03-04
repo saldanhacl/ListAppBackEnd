@@ -53,7 +53,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ListsController listsController() {
+    ListsController listsController() {
         return new ListsController(this.getEntityManager());
     }
 

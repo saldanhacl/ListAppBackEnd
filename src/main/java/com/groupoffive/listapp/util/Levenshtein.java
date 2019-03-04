@@ -20,8 +20,9 @@ public class Levenshtein {
             distancia -= s1.length() * 0.1d;
         }
 
-        /* Caso a segunda string comece com a primeira, remover 0,05*t de distância */
-        if (s2.toLowerCase().startsWith(s1.toLowerCase())) {
+        /* Caso uma das strings comece com a outra, remover 0,05*t de distância */
+        if (s1.toLowerCase().startsWith(s2.toLowerCase()) ||
+                s2.toLowerCase().startsWith(s1.toLowerCase())) {
             distancia -= s1.length() * 0.05d;
         }
 

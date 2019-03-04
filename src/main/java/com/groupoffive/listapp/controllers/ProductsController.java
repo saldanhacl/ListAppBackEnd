@@ -7,9 +7,12 @@ import com.groupoffive.listapp.exceptions.ProductNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.ProductNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
+import com.groupoffive.listapp.util.Levenshtein;
+import com.groupoffive.listapp.util.MapSorter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.*;
 
 public class ProductsController {
 
@@ -17,6 +20,26 @@ public class ProductsController {
 
     public ProductsController(EntityManager entityManager) {
         this.entityManager = entityManager;
+    }
+
+    public Set<Produto> getRecommendedProducts(String nomeProduto) {
+        List<Produto> lista         = entityManager.createQuery("SELECT p FROM Produto p").getResultList();
+        Set<Produto> retorno        = new LinkedHashSet<>();
+        Map<Produto, Double> map    = new LinkedHashMap<>();
+
+        /* Compara os nomes dos produtos com o do produto digitado */
+        for (Produto produto : lista) {
+            Double distancia = Levenshtein.stringsDistance(nomeProduto, produto.getNome());
+            if (distancia < 0.3d) map.put(produto, distancia);
+        }
+
+        /* Ordena o map de produtos pelos mais relevantes */
+        Map mapProcessado = MapSorter.sortByValues(map);
+
+        /* Preenchendo lista com os valores do map */
+        mapProcessado.forEach((k,v) -> retorno.add((Produto) k));
+
+        return retorno;
     }
 
     /**

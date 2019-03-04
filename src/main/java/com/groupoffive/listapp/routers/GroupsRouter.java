@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Set;
-
 @RequestMapping("/groups")
 public class GroupsRouter {
 
@@ -69,7 +67,5 @@ public class GroupsRouter {
     public GrupoDeUsuarios deleteGroup(@PathVariable("id") int groupId) throws GroupNotFoundException {
         return groupsController.deleteGroup(groupId);
     }
-
-
 
 }

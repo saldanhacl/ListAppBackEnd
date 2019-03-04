@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Set;
+
 @RequestMapping("/products")
 public class ProductsRouter {
 
@@ -18,6 +20,12 @@ public class ProductsRouter {
 
     public ProductsRouter(ProductsController productsController) {
         this.productsController = productsController;
+    }
+
+    @RequestMapping(value = "/recommended/", method = RequestMethod.GET, params = { "nomeProduto" })
+    @ResponseBody
+    public Set<Produto> getRecommendedProducts(String nomeProduto) {
+        return productsController.getRecommendedProducts(nomeProduto);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST, params = { "nome", "preco", "idCategoria" })

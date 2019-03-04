@@ -4,8 +4,8 @@ import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
+import com.groupoffive.listapp.util.Levenshtein;
 import com.groupoffive.listapp.util.MapSorter;
-import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -39,12 +39,10 @@ public class CategoriesController {
         Set<Categoria> retorno      = new LinkedHashSet<>();
         Map<Categoria, Double> map  = new LinkedHashMap<>();
 
-        NormalizedLevenshtein l     = new NormalizedLevenshtein();
-
         /* Compara os nomes das categorias e seus produtos com o do produto digitado */
         for (Categoria categoria : lista) {
-            Double distanciaNomeCategoria = l.distance(productName, categoria.getNome());
-            Double distanciaNomesProdutos = this.getDistanciaNomesProdutos(productName, categoria, l);
+            Double distanciaNomeCategoria = Levenshtein.stringsDistance(productName, categoria.getNome());
+            Double distanciaNomesProdutos = this.getDistanciaNomesProdutos(productName, categoria);
 
             map.put(categoria, Double.min(distanciaNomeCategoria, distanciaNomesProdutos));
         }
@@ -58,21 +56,13 @@ public class CategoriesController {
         return retorno;
     }
 
-    private Double getDistanciaNomesProdutos(String productName, Categoria categoria, NormalizedLevenshtein l) {
+    private Double getDistanciaNomesProdutos(String productName, Categoria categoria) {
         Set<Produto> produtos = categoria.getProdutos();
         Double media          = produtos.size() > 0 ? 0d : 1d;
 
+        /* Calcular distância  */
         for (Produto produto : produtos) {
-            Double adicional = 0d;
-
-            /* Caso nome de um dos produtos esteja incluído no outro, considerar relevante */
-            if (productName.toLowerCase().contains(produto.getNome().toLowerCase()) ||
-                    produto.getNome().toLowerCase().contains(productName.toLowerCase())) {
-                adicional = productName.length() * -0.1;
-            }
-
-            /* Calcular distância  */
-            media += (l.distance(productName, produto.getNome()) + adicional) / produtos.size();
+            media += Levenshtein.stringsDistance(productName, produto.getNome()) / produtos.size();
         }
 
         return media;

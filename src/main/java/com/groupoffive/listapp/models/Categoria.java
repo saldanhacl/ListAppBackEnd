@@ -50,4 +50,5 @@ public class Categoria {
     public void setProdutos(Set<Produto> produtos) {
         this.produtos = produtos;
     }
+
 }

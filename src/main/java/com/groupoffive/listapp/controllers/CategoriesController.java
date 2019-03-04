@@ -4,10 +4,12 @@ import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
+import com.groupoffive.listapp.util.MapSorter;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import java.util.Set;
+import java.util.*;
 
 public class CategoriesController {
 
@@ -15,6 +17,65 @@ public class CategoriesController {
 
     public CategoriesController(EntityManager entityManager) {
         this.entityManager = entityManager;
+    }
+
+    /**
+     * Devolve todas as categorias existentes
+     * @return
+     */
+    public Set<Categoria> getCategories() {
+        List<Categoria> lista = this.entityManager.createQuery("SELECT c FROM Categoria c").getResultList();
+        return new HashSet<Categoria>(lista);
+    }
+
+    /**
+     * Devolve uma lista de categorias recomendadas para o nome do produto inserido.
+     * Verifica a similaridade do nome deste produto com o das categorias e seus produtos.
+     * @param productName nome do produto a ser comparado.
+     * @return
+     */
+    public Set<Categoria> getRecommendedCategories(String productName) {
+        List<Categoria> lista       = this.entityManager.createQuery("SELECT c FROM Categoria c").getResultList();
+        Set<Categoria> retorno      = new LinkedHashSet<>();
+        Map<Categoria, Double> map  = new LinkedHashMap<>();
+
+        NormalizedLevenshtein l     = new NormalizedLevenshtein();
+
+        /* Compara os nomes das categorias e seus produtos com o do produto digitado */
+        for (Categoria categoria : lista) {
+            Double distanciaNomeCategoria = l.distance(productName, categoria.getNome());
+            Double distanciaNomesProdutos = this.getDistanciaNomesProdutos(productName, categoria, l);
+
+            map.put(categoria, Double.min(distanciaNomeCategoria, distanciaNomesProdutos));
+        }
+
+        /* Ordena o map de categorias pelas mais relevantes */
+        Map mapProcessado = MapSorter.sortByValues(map);
+
+        /* Preenchendo lista com os valores do map */
+        mapProcessado.forEach((k,v) -> retorno.add((Categoria) k));
+
+        return retorno;
+    }
+
+    private Double getDistanciaNomesProdutos(String productName, Categoria categoria, NormalizedLevenshtein l) {
+        Set<Produto> produtos = categoria.getProdutos();
+        Double media          = produtos.size() > 0 ? 0d : 1d;
+
+        for (Produto produto : produtos) {
+            Double adicional = 0d;
+
+            /* Caso nome de um dos produtos esteja incluído no outro, considerar relevante */
+            if (productName.toLowerCase().contains(produto.getNome().toLowerCase()) ||
+                    produto.getNome().toLowerCase().contains(productName.toLowerCase())) {
+                adicional = productName.length() * -0.1;
+            }
+
+            /* Calcular distância  */
+            media += (l.distance(productName, produto.getNome()) + adicional) / produtos.size();
+        }
+
+        return media;
     }
 
     /**

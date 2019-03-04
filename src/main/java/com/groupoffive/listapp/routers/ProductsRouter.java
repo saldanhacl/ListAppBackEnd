@@ -6,13 +6,11 @@ import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
 import com.groupoffive.listapp.exceptions.ProductNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.ProductNotFoundException;
 import com.groupoffive.listapp.models.Produto;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+@CrossOrigin
 @RequestMapping("/products")
 public class ProductsRouter {
 

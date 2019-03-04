@@ -7,13 +7,11 @@ import com.groupoffive.listapp.exceptions.NotFilledRequiredFieldsException;
 import com.groupoffive.listapp.exceptions.UserNotFoundException;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
 import com.groupoffive.listapp.models.Usuario;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+@CrossOrigin
 @RequestMapping("/users")
 public class UsersRouter {
 

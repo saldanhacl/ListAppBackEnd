@@ -6,11 +6,9 @@ import com.groupoffive.listapp.exceptions.UserAlreadyInGroupException;
 import com.groupoffive.listapp.exceptions.UserNotFoundException;
 import com.groupoffive.listapp.exceptions.UserNotInGroupException;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RequestMapping("/groups")
 public class GroupsRouter {
 

@@ -23,14 +23,14 @@ public class ProductsController {
     }
 
     public Set<Produto> getRecommendedProducts(String nomeProduto) {
-        List<Produto> lista         = entityManager.createQuery("SELECT p FROM Produto p").getResultList();
+        List<Produto> lista         = entityManager.createQuery("SELECT p FROM Produto p", Produto.class).getResultList();
         Set<Produto> retorno        = new LinkedHashSet<>();
         Map<Produto, Double> map    = new LinkedHashMap<>();
 
         /* Compara os nomes dos produtos com o do produto digitado */
         for (Produto produto : lista) {
             Double distancia = Levenshtein.stringsDistance(nomeProduto, produto.getNome());
-            if (distancia < 0.3d) map.put(produto, distancia);
+            if (distancia < 0.4d) map.put(produto, distancia);
         }
 
         /* Ordena o map de produtos pelos mais relevantes */

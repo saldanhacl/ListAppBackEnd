@@ -35,7 +35,7 @@ public class CategoriesController {
      * @return
      */
     public Set<Categoria> getRecommendedCategories(String productName) {
-        List<Categoria> lista       = this.entityManager.createQuery("SELECT c FROM Categoria c").getResultList();
+        List<Categoria> lista       = this.entityManager.createQuery("SELECT c FROM Categoria c", Categoria.class).getResultList();
         Set<Categoria> retorno      = new LinkedHashSet<>();
         Map<Categoria, Double> map  = new LinkedHashMap<>();
 

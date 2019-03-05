@@ -1,14 +1,14 @@
 package com.groupoffive.listapp.routers;
 
 import com.groupoffive.listapp.controllers.GroupsController;
-import com.groupoffive.listapp.exceptions.GroupNotFoundException;
-import com.groupoffive.listapp.exceptions.UserAlreadyInGroupException;
-import com.groupoffive.listapp.exceptions.UserNotFoundException;
-import com.groupoffive.listapp.exceptions.UserNotInGroupException;
+import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.Set;
 
-@CrossOrigin
 @RequestMapping("/groups")
 public class GroupsRouter {
 
@@ -38,25 +38,39 @@ public class GroupsRouter {
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.PUT, params = {"userId"})
     @ResponseBody
-    public GrupoDeUsuarios addUserToGroup(@PathVariable("id")int groupId, int userId) throws UserNotFoundException, GroupNotFoundException, UserAlreadyInGroupException {
+    public GrupoDeUsuarios addUserToGroup(@PathVariable("id")int groupId, int userId) throws GroupNotFoundException, UserNotFoundException, UserAlreadyInGroupException {
         return groupsController.addUserToGroup(userId, groupId);
     }
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.PUT, params = {"userName"})
     @ResponseBody
-    public GrupoDeUsuarios addUserToGroup(@PathVariable("id")int groupId, String userName) throws UserNotFoundException, GroupNotFoundException, UserAlreadyInGroupException {
+    public GrupoDeUsuarios addUserToGroup(@PathVariable("id")int groupId, String userName) throws GroupNotFoundException, UserNotFoundException, UserAlreadyInGroupException {
         return groupsController.addUserToGroup(userName, groupId);
+    }
+
+    @RequestMapping(value = "/{id}/user/", method = RequestMethod.PUT, params = {"userId", "admin"})
+    @ResponseBody
+    public GrupoDeUsuarios toggleUserGroupAdmin(@PathVariable("id")int groupId, int userId, boolean admin)
+            throws UserNotFoundException, GroupNotFoundException, UserNotInGroupException, UserGroupCreatorException, UserAlreadyGroupAdminException, UserWasNotGroupAdminException {
+        return groupsController.toggleUserGroupAdmin(userId, groupId, admin);
+    }
+
+    @RequestMapping(value = "/{id}/user/", method = RequestMethod.PUT, params = {"userName", "admin"})
+    @ResponseBody
+    public GrupoDeUsuarios toggleUserGroupAdmin(@PathVariable("id")int groupId, String userName, boolean admin)
+            throws UserNotFoundException, GroupNotFoundException, UserNotInGroupException, UserGroupCreatorException, UserAlreadyGroupAdminException, UserWasNotGroupAdminException {
+        return groupsController.toggleUserGroupAdmin(userName, groupId, admin);
     }
 
     @RequestMapping(value = "/{id}/user/", method = RequestMethod.DELETE, params = {"userId"})
     @ResponseBody
-    public GrupoDeUsuarios removeUserFromGroup(@PathVariable("id")int groupId, int userId) throws UserNotFoundException, GroupNotFoundException, UserNotInGroupException {
+    public GrupoDeUsuarios removeUserFromGroup(@PathVariable("id")int groupId, int userId) throws GroupNotFoundException, UserNotFoundException, UserNotInGroupException {
         return groupsController.removeUserFromGroup(userId, groupId);
     }
 
     @RequestMapping(value = "/{id}/user/", method = RequestMethod.DELETE, params = {"userName"})
     @ResponseBody
-    public GrupoDeUsuarios removeUserFromGroup(@PathVariable("id")int groupId, String userName) throws UserNotFoundException, GroupNotFoundException, UserNotInGroupException {
+    public GrupoDeUsuarios removeUserFromGroup(@PathVariable("id")int groupId, String userName) throws GroupNotFoundException, UserNotFoundException, UserNotInGroupException {
         return groupsController.removeUserFromGroup(userName, groupId);
     }
 

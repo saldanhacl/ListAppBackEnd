@@ -42,6 +42,24 @@ public class GrupoDeUsuarios implements Serializable {
         this.usuarios = usuarios;
     }
 
+
+    public boolean containsUser(Usuario user){
+        boolean contains=false;
+        
+        try{
+            for (UsuarioGrupo usuario : usuarios) {
+                if(usuario.getUsuario().equals(user)){
+                    contains = true;
+                    break;
+                }
+            }            
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return contains;
+    }
+
     public int getId() {
         return id;
     }
@@ -49,7 +67,6 @@ public class GrupoDeUsuarios implements Serializable {
     public Set<UsuarioGrupo> getUsuarios() {
         return usuarios;
     }
-
     public void setUsuarios(Set<UsuarioGrupo> usuarios) {
         this.usuarios = usuarios;
     }
@@ -57,7 +74,6 @@ public class GrupoDeUsuarios implements Serializable {
     public Set<ListaDeCompras> getListasDeCompras() {
         return listasDeCompras;
     }
-
     public void setListasDeCompras(Set<ListaDeCompras> listasDeCompras) {
         this.listasDeCompras = listasDeCompras;
     }
@@ -65,17 +81,12 @@ public class GrupoDeUsuarios implements Serializable {
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
 
     public Usuario getCriador() {
         return criador;
-    }
-
-    public void setCriador(Usuario criador) {
-        this.criador = criador;
     }
 
     @Override

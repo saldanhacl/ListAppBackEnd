@@ -110,14 +110,10 @@ public class GroupsController {
     public GrupoDeUsuarios createGroup(String nome, int creator_id) throws UserNotFoundException{
         Usuario criador = entityManager.find(Usuario.class, creator_id);
 
-        if(criador == null) throw new UserNotFoundException();
-
         return createGroup(nome, criador);
     }
     public GrupoDeUsuarios createGroup(String nome, String creator_name) throws UserNotFoundException{
         Usuario criador = getUserByName(creator_name);
-
-        if(criador == null) throw new UserNotFoundException();
 
         return createGroup(nome, criador);
     }

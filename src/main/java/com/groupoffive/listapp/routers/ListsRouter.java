@@ -17,18 +17,41 @@ public class ListsRouter {
         this.listsController = listsController;
     }
 
+    /**
+     * Obtem os dados de uma lista
+     * Método: GET
+     * /lists/{id}
+     * @param listId
+     * @return
+     * @throws ListNotFoundException
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Set<Produto> getListProducts(@PathVariable("id") int listId) throws ListNotFoundException {
         return listsController.getListProducts(listId);
     }
 
+    /**
+     * Remove uma lista
+     * Método: DELETE
+     * /lists/{id}
+     * @param listId
+     * @throws ListNotFoundException
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void deleteList(@PathVariable("id") int listId) throws ListNotFoundException {
         listsController.deleteList(listId);
     }
 
+    /**
+     * Atualiza uma lista
+     * Método: PUT
+     * /lists/{id}
+     * @param listId
+     * @param listName
+     * @throws ListNotFoundException
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public void updateList(@PathVariable("id") int listId, String listName) throws ListNotFoundException {

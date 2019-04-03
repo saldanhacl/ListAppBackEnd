@@ -3,9 +3,11 @@ package com.groupoffive.listapp.routers;
 import com.groupoffive.listapp.controllers.GroupsController;
 import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@CrossOrigin(origins = "", allowedHeaders = "")
 @RequestMapping("/groups")
 public class GroupsRouter {
 

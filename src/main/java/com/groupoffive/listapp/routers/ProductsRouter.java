@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-@CrossOrigin(origins = "", allowedHeaders = "")
 @RequestMapping("/products")
 public class ProductsRouter {
 
@@ -20,77 +19,30 @@ public class ProductsRouter {
         this.productsController = productsController;
     }
 
-    /**
-     * Obtem produtos com nomes semelhantes ao digitado até o momento
-     * Método: GET
-     * /products/recommended/
-     * @param nomeProduto
-     * @return
-     */
     @RequestMapping(value = "/recommended/", method = RequestMethod.GET, params = { "nomeProduto" })
     @ResponseBody
     public Set<Produto> getRecommendedProducts(String nomeProduto) {
         return productsController.getRecommendedProducts(nomeProduto);
     }
 
-    /**
-     * Adiciona um produto
-     * Método: POST
-     * /products/
-     * @param nome
-     * @param preco
-     * @param idCategoria
-     * @return
-     * @throws ProductNameAlreadyInUseException
-     * @throws CategoryNotFoundException
-     */
     @RequestMapping(value = "/", method = RequestMethod.POST, params = { "nome", "preco", "idCategoria" })
     @ResponseBody
     public Produto addProduct(String nome, double preco, int idCategoria) throws ProductNameAlreadyInUseException, CategoryNotFoundException {
         return productsController.addProduct(nome, preco, idCategoria);
     }
 
-    /**
-     * Adiciona um produto
-     * Método: POST
-     * /products/
-     * @param nome
-     * @param preco
-     * @param nomeCategoria
-     * @return
-     * @throws ProductNameAlreadyInUseException
-     * @throws CategoryNameAlreadyInUseException
-     */
     @RequestMapping(value = "/", method = RequestMethod.POST, params = { "nome", "preco", "nomeCategoria" })
     @ResponseBody
     public Produto addProduct(String nome, double preco, String nomeCategoria) throws ProductNameAlreadyInUseException, CategoryNameAlreadyInUseException {
         return productsController.addProduct(nome, preco, nomeCategoria);
     }
 
-    /**
-     * Remove um produto
-     * Método: DELETE
-     * /products/{id}
-     * @param idProduto
-     * @throws ProductNotFoundException
-     */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void removeProduct(@PathVariable("id") int idProduto) throws ProductNotFoundException {
         productsController.removeProduct(idProduto);
     }
 
-    /**
-     * Atualiza um produto
-     * Método: PUT
-     * /products/{id}
-     * @param idProduto
-     * @param nome
-     * @param preco
-     * @param idCategoria
-     * @throws ProductNotFoundException
-     * @throws CategoryNotFoundException
-     */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, params = { "nome", "preco", "idCategoria" })
     @ResponseBody
     public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, int idCategoria)
@@ -98,17 +50,6 @@ public class ProductsRouter {
         productsController.updateProduct(idProduto, nome, preco, idCategoria);
     }
 
-    /**
-     * Atualiza um produto
-     * Método: PUT
-     * /products/{id}
-     * @param idProduto
-     * @param nome
-     * @param preco
-     * @param nomeCategoria
-     * @throws ProductNotFoundException
-     * @throws CategoryNameAlreadyInUseException
-     */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, params = { "nome", "preco", "nomeCategoria" })
     @ResponseBody
     public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, String nomeCategoria)

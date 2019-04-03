@@ -1,6 +1,7 @@
 package com.groupoffive.listapp.routers;
 
 import com.groupoffive.listapp.controllers.ListsController;
+import com.groupoffive.listapp.exceptions.GroupNotFoundException;
 import com.groupoffive.listapp.exceptions.ListNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
@@ -15,6 +16,19 @@ public class ListsRouter {
 
     public ListsRouter(ListsController listsController) {
         this.listsController = listsController;
+    }
+
+    /**
+     * Cria uma nova lista relacionando-a a um grupo
+     * Método: POST
+     * /lists/
+     * @param nome
+     * @param groupId
+     */
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @ResponseBody
+    public void createList(String nome, int groupId) throws GroupNotFoundException {
+        listsController.createList(nome, groupId);
     }
 
     /**

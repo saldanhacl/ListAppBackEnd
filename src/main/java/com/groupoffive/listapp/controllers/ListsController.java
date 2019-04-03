@@ -1,7 +1,9 @@
 package com.groupoffive.listapp.controllers;
 
+import com.groupoffive.listapp.exceptions.GroupNotFoundException;
 import com.groupoffive.listapp.exceptions.ListNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
+import com.groupoffive.listapp.models.GrupoDeUsuarios;
 import com.groupoffive.listapp.models.ListaDeCompras;
 import com.groupoffive.listapp.models.Produto;
 
@@ -15,6 +17,16 @@ public class ListsController {
 
     public ListsController(EntityManager entityManager) {
         this.entityManager = entityManager;
+    }
+
+    public void createList(String listName, int groupId) throws GroupNotFoundException {
+        GrupoDeUsuarios grupo = entityManager.find(GrupoDeUsuarios.class, groupId);
+
+        if (null == grupo) throw new GroupNotFoundException();
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(new ListaDeCompras(listName, grupo));
+        entityManager.getTransaction().commit();
     }
 
     /**

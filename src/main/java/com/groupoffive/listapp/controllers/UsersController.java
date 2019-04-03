@@ -23,12 +23,6 @@ public class UsersController {
         this.crypt         = crypt;
     }
 
-    /**
-     * Retorna os grupos aos quais um usuário está associado.
-     * @param usuario
-     * @return
-     * @throws UserNotFoundException caso o usuario solicitado nao esteja cadastrado ou nao esteja em algum grupo
-     */
     private Set<GrupoDeUsuarios> getGroupsFromUser(Usuario usuario) throws UserNotFoundException {
         if (null == usuario) throw new UserNotFoundException();
 
@@ -37,6 +31,13 @@ public class UsersController {
 
         return grupos;
     }
+
+    /**
+     * Retorna os grupos aos quais um usuário está associado.
+     * @param userId
+     * @return
+     * @throws UserNotFoundException caso o usuario solicitado nao esteja cadastrado ou nao esteja em algum grupo
+     */
     public Set<GrupoDeUsuarios> getGroupsFromUser(int userId) throws UserNotFoundException {
         Usuario usuario = entityManager.find(Usuario.class, userId);
 

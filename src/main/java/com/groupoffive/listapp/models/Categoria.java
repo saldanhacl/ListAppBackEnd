@@ -1,8 +1,5 @@
 package com.groupoffive.listapp.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,10 +10,10 @@ public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private String nome;
+    protected int id;
+    protected String nome;
     @OneToMany(mappedBy="categoria")
-    private Set<Produto> produtos = new HashSet<>();
+    protected Set<Produto> produtos = new HashSet<>();
 
     public Categoria() {}
 
@@ -41,12 +38,10 @@ public class Categoria {
         this.nome = nome;
     }
 
-    @JsonIgnore
     public Set<Produto> getProdutos() {
         return produtos;
     }
 
-    @JsonProperty
     public void setProdutos(Set<Produto> produtos) {
         this.produtos = produtos;
     }

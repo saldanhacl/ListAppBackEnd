@@ -81,16 +81,16 @@ public class GroupsRouter {
      * Método: PUT
      * /groups/{id}
      * @param groupId
-     * @param userName
+     * @param userEmail
      * @return
      * @throws GroupNotFoundException
      * @throws UserNotFoundException
      * @throws UserAlreadyInGroupException
      */
-    @RequestMapping(value = "/{id}/", method = RequestMethod.PUT, params = {"userName"})
+    @RequestMapping(value = "/{id}/", method = RequestMethod.PUT, params = {"userEmail"})
     @ResponseBody
-    public GrupoDeUsuarios addUserToGroup(@PathVariable("id")int groupId, String userName) throws GroupNotFoundException, UserNotFoundException, UserAlreadyInGroupException {
-        return groupsController.addUserToGroup(userName, groupId);
+    public GrupoDeUsuarios addUserToGroup(@PathVariable("id")int groupId, String userEmail) throws GroupNotFoundException, UserNotFoundException, UserAlreadyInGroupException {
+        return groupsController.addUserToGroup(userEmail, groupId);
     }
 
     /**

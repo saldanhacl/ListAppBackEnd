@@ -1,5 +1,7 @@
 package com.groupoffive.listapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -48,10 +50,12 @@ public class Produto {
         this.preco = preco;
     }
 
+    @JsonIgnore
     public Categoria getCategoria() {
         return categoria;
     }
 
+    @JsonIgnore
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }

@@ -2,6 +2,7 @@ package com.groupoffive.listapp.routers;
 
 import com.groupoffive.listapp.controllers.ListsController;
 import com.groupoffive.listapp.exceptions.ListNotFoundException;
+import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,17 +19,31 @@ public class ListsRouter {
     }
 
     /**
-     * Obtem os dados de uma lista
+     * Obtem os produtos de uma lista
      * Método: GET
-     * /lists/{id}
+     * /lists/{id}/products
      * @param listId
      * @return
      * @throws ListNotFoundException
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/products", method = RequestMethod.GET)
     @ResponseBody
     public Set<Produto> getListProducts(@PathVariable("id") int listId) throws ListNotFoundException {
         return listsController.getListProducts(listId);
+    }
+
+    /**
+     * Obtem as categorias de uma lista
+     * Método: GET
+     * /lists/{id}/categories
+     * @param listId
+     * @return
+     * @throws ListNotFoundException
+     */
+    @RequestMapping(value = "/{id}/categories", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<Categoria> getListCategories(@PathVariable("id") int listId) throws ListNotFoundException {
+        return listsController.getListCategories(listId);
     }
 
     /**

@@ -157,8 +157,9 @@ public class GroupsController {
 
         return addUserToGroup(user, group);
     }
-    public GrupoDeUsuarios addUserToGroup(String user_name, int group_id) throws GroupNotFoundException, UserNotFoundException, UserAlreadyInGroupException{
-        Usuario user = getUserByName(user_name);
+
+    public GrupoDeUsuarios addUserToGroup(String email, int group_id) throws GroupNotFoundException, UserNotFoundException, UserAlreadyInGroupException{
+        Usuario user = getUserByEmail(email);
         GrupoDeUsuarios group = entityManager.find(GrupoDeUsuarios.class, group_id);
 
         return addUserToGroup(user, group);
@@ -234,6 +235,7 @@ public class GroupsController {
 
         return removeUserFromGroup(user, group);
     }
+
     public GrupoDeUsuarios removeUserFromGroup(String user_name, int group_id) throws GroupNotFoundException, UserNotFoundException, UserNotInGroupException{
         Usuario user = getUserByName(user_name);
         GrupoDeUsuarios group = entityManager.find(GrupoDeUsuarios.class, group_id);
@@ -363,6 +365,22 @@ public class GroupsController {
         try{
 
             return entityManager.createQuery("SELECT u from Usuario u WHERE u.nome = :nome", Usuario.class).setParameter("nome", nome).getSingleResult();
+
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    /**
+     * Metodo para buscar um usuario especifico pelo email
+     *
+     * @param email email do usuario que deseja buscar
+     * @return usuario encontrado
+     */
+    private Usuario getUserByEmail(String email){
+        try{
+
+            return entityManager.createQuery("SELECT u from Usuario u WHERE u.email = :email", Usuario.class).setParameter("email", email).getSingleResult();
 
         }catch(NoResultException e){
             return null;

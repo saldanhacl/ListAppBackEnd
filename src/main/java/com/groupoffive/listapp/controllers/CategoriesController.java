@@ -2,6 +2,7 @@ package com.groupoffive.listapp.controllers;
 
 import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
+import com.groupoffive.listapp.exceptions.NotFilledRequiredFieldsException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
 import com.groupoffive.listapp.util.Levenshtein;
@@ -88,8 +89,9 @@ public class CategoriesController {
      * @return
      * @throws CategoryNameAlreadyInUseException
      */
-    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUseException {
+    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUseException, NotFilledRequiredFieldsException {
         if (this.categoryNameIsInUse(nome)) throw new CategoryNameAlreadyInUseException();
+        if(fieldIsEmpty(nome)) throw new NotFilledRequiredFieldsException();
 
         Categoria categoria = new Categoria(nome);
 
@@ -107,7 +109,7 @@ public class CategoriesController {
      * @return
      * @throws CategoryNameAlreadyInUseException
      */
-    Categoria addCategory(String nome, boolean canCommit) throws CategoryNameAlreadyInUseException {
+    public Categoria addCategory(String nome, boolean canCommit) throws CategoryNameAlreadyInUseException {
         if (this.categoryNameIsInUse(nome)) throw new CategoryNameAlreadyInUseException();
 
         Categoria categoria = new Categoria(nome);
@@ -164,6 +166,12 @@ public class CategoriesController {
         entityManager.getTransaction().begin();
         categoria.setNome(nome);
         entityManager.getTransaction().commit();
+    }
+
+    private boolean fieldIsEmpty(String field_data){
+
+        return (field_data == null || field_data.equals("") || field_data.equals("\"\""));
+
     }
 
 }

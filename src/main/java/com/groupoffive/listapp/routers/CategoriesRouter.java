@@ -3,13 +3,14 @@ package com.groupoffive.listapp.routers;
 import com.groupoffive.listapp.controllers.CategoriesController;
 import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
 import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
+import com.groupoffive.listapp.exceptions.NotFilledRequiredFieldsException;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.Produto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-@CrossOrigin
+@CrossOrigin(origins = "", allowedHeaders = "")
 @RequestMapping("/categories")
 public class CategoriesRouter {
 
@@ -68,7 +69,7 @@ public class CategoriesRouter {
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUseException {
+    public Categoria addCategory(String nome) throws CategoryNameAlreadyInUseException, NotFilledRequiredFieldsException {
         return categoriesController.addCategory(nome);
     }
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-@CrossOrigin
+@CrossOrigin(origins = "", allowedHeaders = "")
 @RequestMapping("/users")
 public class UsersRouter {
 

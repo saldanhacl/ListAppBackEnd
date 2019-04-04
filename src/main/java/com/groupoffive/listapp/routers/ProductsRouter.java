@@ -1,10 +1,7 @@
 package com.groupoffive.listapp.routers;
 
 import com.groupoffive.listapp.controllers.ProductsController;
-import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
-import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
-import com.groupoffive.listapp.exceptions.ProductNameAlreadyInUseException;
-import com.groupoffive.listapp.exceptions.ProductNotFoundException;
+import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.Produto;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +52,12 @@ public class ProductsRouter {
     public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, String nomeCategoria)
             throws ProductNotFoundException, CategoryNameAlreadyInUseException {
         productsController.updateProduct(idProduto, nome, preco, nomeCategoria);
+    }
+
+    @RequestMapping(value = "/{id}/addToList/{idLista}", method = RequestMethod.PUT)
+    @ResponseBody
+    public void addProductToList(@PathVariable("id") int idProduto, @PathVariable("idLista") int idLista) throws ProductNotFoundException, ListNotFoundException {
+        productsController.addProductToList(idProduto, idLista);
     }
 
 }

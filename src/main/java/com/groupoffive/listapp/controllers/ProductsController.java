@@ -1,12 +1,11 @@
 package com.groupoffive.listapp.controllers;
 
 import com.groupoffive.listapp.AppConfig;
-import com.groupoffive.listapp.exceptions.CategoryNameAlreadyInUseException;
-import com.groupoffive.listapp.exceptions.CategoryNotFoundException;
-import com.groupoffive.listapp.exceptions.ProductNameAlreadyInUseException;
-import com.groupoffive.listapp.exceptions.ProductNotFoundException;
+import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.Categoria;
+import com.groupoffive.listapp.models.ListaDeCompras;
 import com.groupoffive.listapp.models.Produto;
+import com.groupoffive.listapp.models.ProdutoLista;
 import com.groupoffive.listapp.util.Levenshtein;
 import com.groupoffive.listapp.util.MapSorter;
 
@@ -155,6 +154,19 @@ public class ProductsController {
         } catch (CategoryNotFoundException e) {
             // Tenho muita fé de que isso não vai acontecer
         }
+    }
+
+    public void addProductToList(int idProduto, int idLista) throws ProductNotFoundException, ListNotFoundException {
+        Produto produto      = entityManager.find(Produto.class, idProduto);
+        if (null == produto) throw new ProductNotFoundException();
+
+        ListaDeCompras lista = entityManager.find(ListaDeCompras.class, idLista);
+        if (null == lista) throw new ListNotFoundException();
+
+        ProdutoLista pl      = new ProdutoLista(lista, produto);
+        entityManager.getTransaction().begin();
+        entityManager.persist(pl);
+        entityManager.getTransaction().commit();
     }
 
 }

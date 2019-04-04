@@ -23,9 +23,11 @@ public class ListsController {
         GrupoDeUsuarios grupo = entityManager.find(GrupoDeUsuarios.class, groupId);
 
         if (null == grupo) throw new GroupNotFoundException();
+        ListaDeCompras lista = new ListaDeCompras(listName, grupo);
+        grupo.getListasDeCompras().add(lista);
 
         entityManager.getTransaction().begin();
-        entityManager.persist(new ListaDeCompras(listName, grupo));
+        entityManager.persist(lista);
         entityManager.getTransaction().commit();
     }
 

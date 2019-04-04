@@ -18,6 +18,7 @@ public class ListaDeCompras {
     @ManyToOne
     @JoinColumn(name="grupo_de_usuarios_id")
     private GrupoDeUsuarios grupoDeUsuarios;
+
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "produto_lista",

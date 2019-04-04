@@ -5,7 +5,7 @@ import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.ListaDeCompras;
 import com.groupoffive.listapp.models.Produto;
-import com.groupoffive.listapp.models.ProdutoLista;
+//import com.groupoffive.listapp.models.ProdutoLista;
 import com.groupoffive.listapp.util.Levenshtein;
 import com.groupoffive.listapp.util.MapSorter;
 
@@ -163,9 +163,10 @@ public class ProductsController {
         ListaDeCompras lista = entityManager.find(ListaDeCompras.class, idLista);
         if (null == lista) throw new ListNotFoundException();
 
-        ProdutoLista pl      = new ProdutoLista(lista, produto);
+//        ProdutoLista pl      = new ProdutoLista(lista, produto);
+        lista.getProdutos().add(produto);
         entityManager.getTransaction().begin();
-        entityManager.persist(pl);
+        entityManager.persist(lista);
         entityManager.getTransaction().commit();
     }
 

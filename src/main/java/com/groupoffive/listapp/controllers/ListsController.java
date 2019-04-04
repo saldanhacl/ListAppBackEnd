@@ -19,7 +19,7 @@ public class ListsController {
         this.entityManager = entityManager;
     }
 
-    public void createList(String listName, int groupId) throws GroupNotFoundException {
+    public ListaDeCompras createList(String listName, int groupId) throws GroupNotFoundException {
         GrupoDeUsuarios grupo = entityManager.find(GrupoDeUsuarios.class, groupId);
 
         if (null == grupo) throw new GroupNotFoundException();
@@ -29,6 +29,8 @@ public class ListsController {
         entityManager.getTransaction().begin();
         entityManager.persist(lista);
         entityManager.getTransaction().commit();
+
+        return lista;
     }
 
     /**
@@ -91,14 +93,18 @@ public class ListsController {
      * @param nomeLista nome a ser atribuído para a lista
      * @throws ListNotFoundException Exceção lançada caso lista com este id não seja encontrada
      */
-    public void updateList(int listId, String nomeLista) throws ListNotFoundException {
+    public ListaDeCompras updateList(int listId, String nomeLista) throws ListNotFoundException {
         ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
 
         if (null == lista) throw new ListNotFoundException();
 
-        entityManager.getTransaction().begin();
         lista.setNome(nomeLista);
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(lista);
         entityManager.getTransaction().commit();
+
+        return lista;
     }
 
 }

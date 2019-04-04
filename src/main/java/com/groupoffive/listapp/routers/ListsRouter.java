@@ -4,6 +4,7 @@ import com.groupoffive.listapp.controllers.ListsController;
 import com.groupoffive.listapp.exceptions.GroupNotFoundException;
 import com.groupoffive.listapp.exceptions.ListNotFoundException;
 import com.groupoffive.listapp.models.Categoria;
+import com.groupoffive.listapp.models.ListaDeCompras;
 import com.groupoffive.listapp.models.Produto;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,8 @@ public class ListsRouter {
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public void createList(String nome, int groupId) throws GroupNotFoundException {
-        listsController.createList(nome, groupId);
+    public ListaDeCompras createList(String nome, int groupId) throws GroupNotFoundException {
+        return listsController.createList(nome, groupId);
     }
 
     /**
@@ -82,8 +83,8 @@ public class ListsRouter {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public void updateList(@PathVariable("id") int listId, String listName) throws ListNotFoundException {
-        listsController.updateList(listId, listName);
+    public ListaDeCompras updateList(@PathVariable("id") int listId, String listName) throws ListNotFoundException {
+        return listsController.updateList(listId, listName);
     }
 
 }

@@ -56,7 +56,6 @@ public class UsersController {
         String cryptedPass = crypt.cryptString(senha);
 
         try {
-
             return entityManager.createQuery(
                     "SELECT u from Usuario u WHERE u.email = :email AND u.senha = :senha", Usuario.class
             ).setParameter("email", email).setParameter("senha", cryptedPass).getSingleResult();

@@ -1,8 +1,7 @@
 package com.groupoffive.listapp.routers;
 
 import com.groupoffive.listapp.controllers.ListsController;
-import com.groupoffive.listapp.exceptions.GroupNotFoundException;
-import com.groupoffive.listapp.exceptions.ListNotFoundException;
+import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.ListaDeCompras;
 import com.groupoffive.listapp.models.Produto;
@@ -61,19 +60,6 @@ public class ListsRouter {
     }
 
     /**
-     * Remove uma lista
-     * Método: DELETE
-     * /lists/{id}
-     * @param listId
-     * @throws ListNotFoundException
-     */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public void deleteList(@PathVariable("id") int listId) throws ListNotFoundException {
-        listsController.deleteList(listId);
-    }
-
-    /**
      * Atualiza uma lista
      * Método: PUT
      * /lists/{id}
@@ -86,5 +72,47 @@ public class ListsRouter {
     public ListaDeCompras updateList(@PathVariable("id") int listId, String listName) throws ListNotFoundException {
         return listsController.updateList(listId, listName);
     }
+
+    /**
+     * Atualiza uma lista
+     * Método: PUT
+     * /lists/{id}/products/
+     * @param listId
+     * @param productId
+     * @throws ListNotFoundException
+     */
+    @RequestMapping(value = "/{id}/products/", method = RequestMethod.PUT)
+    @ResponseBody
+    public ListaDeCompras addProduct(@PathVariable("id") int listId, int productId) throws ListNotFoundException, ProductNotFoundException, ProductAlreadyInListException {
+        return listsController.addProduct(listId, productId);
+    }
+
+    /**
+     * Remove uma lista
+     * Método: DELETE
+     * /lists/{id}/products/
+     * @param listId
+     * @param productId
+     * @throws ListNotFoundException
+     */
+    @RequestMapping(value = "/{id}/products/", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void removeProduct(@PathVariable("id") int listId, int productId) throws ListNotFoundException, ProductNotFoundException, ProductDoesNotInListException {
+        listsController.removeProduct(listId, productId);
+    }
+
+    /**
+     * Remove uma lista
+     * Método: DELETE
+     * /lists/{id}
+     * @param listId
+     * @throws ListNotFoundException
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void deleteList(@PathVariable("id") int listId) throws ListNotFoundException {
+        listsController.deleteList(listId);
+    }
+
 
 }

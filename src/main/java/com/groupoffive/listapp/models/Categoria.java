@@ -12,7 +12,7 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected int id;
     protected String nome;
-    @OneToMany(mappedBy="categoria")
+    @OneToMany(mappedBy="categoria", cascade = { CascadeType.ALL })
     protected Set<Produto> produtos = new HashSet<>();
 
     public Categoria() {}

@@ -1,7 +1,6 @@
 package com.groupoffive.listapp.controllers;
 
-import com.groupoffive.listapp.exceptions.GroupNotFoundException;
-import com.groupoffive.listapp.exceptions.ListNotFoundException;
+import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.Categoria;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
 import com.groupoffive.listapp.models.ListaDeCompras;
@@ -69,6 +68,40 @@ public class ListsController {
         return categorias;
     }
 
+    public ListaDeCompras addProduct(int listId, int productId) throws ListNotFoundException, ProductNotFoundException, ProductAlreadyInListException {
+        ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
+        Produto produto = entityManager.find(Produto.class, productId);
+
+        if (null == lista) throw new ListNotFoundException();
+        if(null == produto) throw new ProductNotFoundException();
+        if(lista.getProdutos().contains(produto)) throw new ProductAlreadyInListException();
+
+        lista.getProdutos().add(produto);
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(lista);
+        entityManager.getTransaction().commit();
+
+        return lista;
+    }
+
+    public ListaDeCompras removeProduct(int listId, int productId) throws ListNotFoundException, ProductNotFoundException, ProductDoesNotInListException {
+        ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
+        Produto produto = entityManager.find(Produto.class, productId);
+
+        if (null == lista) throw new ListNotFoundException();
+        if(null == produto) throw new ProductNotFoundException();
+        if(!lista.getProdutos().contains(produto)) throw new ProductDoesNotInListException();
+
+        lista.getProdutos().remove(produto);
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(lista);
+        entityManager.getTransaction().commit();
+
+        return lista;
+    }
+
     /**
      * Remove todos os produtos de uma lista e logo em seguida remove a lista
      * @param listId id da lista a ser removida
@@ -79,10 +112,9 @@ public class ListsController {
 
         if (null == lista) throw new ListNotFoundException();
 
+        lista.setProdutos(new HashSet<>());
+
         entityManager.getTransaction().begin();
-        for (Produto produto : lista.getProdutos()) {
-            entityManager.remove(produto);
-        }
         entityManager.remove(lista);
         entityManager.getTransaction().commit();
     }

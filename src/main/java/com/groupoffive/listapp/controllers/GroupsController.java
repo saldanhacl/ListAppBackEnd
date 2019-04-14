@@ -331,8 +331,8 @@ public class GroupsController {
                 usuarios.add(user_group.getUsuario());
             });
 
-            entityManager.getTransaction().begin();
             group.setUsuarios(new HashSet<>());
+            entityManager.getTransaction().begin();
             usuarios.forEach(usuario -> {
                 UsuarioGrupo ug = entityManager.find(UsuarioGrupo.class, new UsuarioGrupoPK(usuario, group));
 

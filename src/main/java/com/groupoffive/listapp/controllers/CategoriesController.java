@@ -146,6 +146,12 @@ public class CategoriesController {
         if (null == categoria) throw new CategoryNotFoundException();
 
         entityManager.getTransaction().begin();
+        categoria.getProdutos().forEach(produto -> entityManager.remove(produto));
+        entityManager.getTransaction().commit();
+
+        categoria.setProdutos(new HashSet<>());
+
+        entityManager.getTransaction().begin();
         entityManager.remove(categoria);
         entityManager.getTransaction().commit();
     }

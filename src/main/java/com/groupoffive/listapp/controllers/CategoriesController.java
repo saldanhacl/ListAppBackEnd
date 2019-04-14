@@ -137,26 +137,6 @@ public class CategoriesController {
     }
 
     /**
-     * Remove a categoria informada. Os produtos ficarão com idCategoria setado como null.
-     * @param idCategoria
-     */
-    public void removeCategory(int idCategoria) throws CategoryNotFoundException {
-        Categoria categoria = entityManager.find(Categoria.class, idCategoria);
-
-        if (null == categoria) throw new CategoryNotFoundException();
-
-        entityManager.getTransaction().begin();
-        categoria.getProdutos().forEach(produto -> entityManager.remove(produto));
-        entityManager.getTransaction().commit();
-
-        categoria.setProdutos(new HashSet<>());
-
-        entityManager.getTransaction().begin();
-        entityManager.remove(categoria);
-        entityManager.getTransaction().commit();
-    }
-
-    /**
      * Atualiza os dados de uma categoria.
      * @param idCategoria
      * @param nome
@@ -172,6 +152,31 @@ public class CategoriesController {
         entityManager.getTransaction().commit();
 
         return categoria;
+    }
+
+    /**
+     * Remove a categoria informada. Os produtos ficarão com idCategoria setado como null.
+     * @param idCategoria
+     */
+    public void removeCategory(int idCategoria) throws CategoryNotFoundException {
+        Categoria categoria = entityManager.find(Categoria.class, idCategoria);
+
+        if (null == categoria) throw new CategoryNotFoundException();
+
+        List<Produto> produtos = new ArrayList<>();
+
+        categoria.getProdutos().forEach(produto -> produtos.add(produto));
+        categoria.setProdutos(new HashSet<>());
+
+        entityManager.getTransaction().begin();
+        for (int i = produtos.size() - 1; i >= 0; i--) {
+            entityManager.remove(produtos.get(i));
+        }
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(categoria);
+        entityManager.getTransaction().commit();
     }
 
 }

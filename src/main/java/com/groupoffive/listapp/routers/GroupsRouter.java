@@ -183,8 +183,8 @@ public class GroupsRouter {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public GrupoDeUsuarios deleteGroup(@PathVariable("id") int groupId) throws GroupNotFoundException {
-        return groupsController.deleteGroup(groupId);
+    public GrupoDeUsuarios deleteGroup(@PathVariable("id") int groupId, int eraserUserId) throws GroupNotFoundException, UserNotFoundException, NotGroupOwnerException {
+        return groupsController.deleteGroup(groupId, eraserUserId);
     }
 
 }

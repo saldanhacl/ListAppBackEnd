@@ -57,6 +57,7 @@ public class ProductsController {
         Produto produto = new Produto(nome, preco, categoria);
 
         if (!this.entityManager.getTransaction().isActive()) this.entityManager.getTransaction().begin();
+        categoria.getProdutos().add(produto);
         this.entityManager.persist(produto);
         this.entityManager.getTransaction().commit();
 
@@ -97,21 +98,6 @@ public class ProductsController {
         } catch (NoResultException e) {
             return false;
         }
-    }
-
-    /**
-     * Remove o produto informado.
-     * @param idProduto
-     * @throws ProductNotFoundException
-     */
-    public void removeProduct(int idProduto) throws ProductNotFoundException {
-        Produto produto = entityManager.find(Produto.class, idProduto);
-
-        if (null == produto) throw new ProductNotFoundException();
-
-        entityManager.getTransaction().begin();
-        entityManager.remove(produto);
-        entityManager.getTransaction().commit();
     }
 
     /**
@@ -173,4 +159,19 @@ public class ProductsController {
         entityManager.getTransaction().commit();
     }
 
+
+    /**
+     * Remove o produto informado.
+     * @param idProduto
+     * @throws ProductNotFoundException
+     */
+    public void removeProduct(int idProduto) throws ProductNotFoundException {
+        Produto produto = entityManager.find(Produto.class, idProduto);
+
+        if (null == produto) throw new ProductNotFoundException();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(produto);
+        entityManager.getTransaction().commit();
+    }
 }

@@ -220,7 +220,7 @@ public class GroupsController {
                 entityManager.getTransaction().commit();
             } else {
                 //Deletar o grupo, caso nao tenha mais usuarios
-                deleteGroup(group);
+                deleteGroup(group, group.getCriador());
             }
 
         }catch (Exception e){
@@ -310,9 +310,12 @@ public class GroupsController {
      *
      * @throws GroupNotFoundException caso o grupo solicitado nao esteja cadastrado
      */
-    private GrupoDeUsuarios deleteGroup(GrupoDeUsuarios group) throws GroupNotFoundException {
+    private GrupoDeUsuarios deleteGroup(GrupoDeUsuarios group, Usuario eraserUser) throws GroupNotFoundException, UserNotFoundException, NotGroupOwnerException {
 
         if (group == null) throw new GroupNotFoundException();
+        if (eraserUser == null) throw new UserNotFoundException();
+
+        if(!group.getCriador().equals(eraserUser)) throw new NotGroupOwnerException();
 
         try {
 
@@ -349,10 +352,11 @@ public class GroupsController {
 
         return group;
     }
-    public GrupoDeUsuarios deleteGroup(int groupId) throws GroupNotFoundException{
+    public GrupoDeUsuarios deleteGroup(int groupId, int eraserUserId) throws GroupNotFoundException, UserNotFoundException, NotGroupOwnerException {
         GrupoDeUsuarios group = entityManager.find(GrupoDeUsuarios.class, groupId);
+        Usuario eraserUser = entityManager.find(Usuario.class, eraserUserId);
 
-        return deleteGroup(group);
+        return deleteGroup(group, eraserUser);
     }
 
     /**

@@ -103,23 +103,6 @@ public class ListsController {
     }
 
     /**
-     * Remove todos os produtos de uma lista e logo em seguida remove a lista
-     * @param listId id da lista a ser removida
-     * @throws ListNotFoundException Exceção lançada caso lista com este id não seja encontrada
-     */
-    public void deleteList(int listId) throws ListNotFoundException {
-        ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
-
-        if (null == lista) throw new ListNotFoundException();
-
-        lista.setProdutos(new HashSet<>());
-
-        entityManager.getTransaction().begin();
-        entityManager.remove(lista);
-        entityManager.getTransaction().commit();
-    }
-
-    /**
      * Altera as informações de uma lista
      * @param listId id da lista a ser atualizada
      * @param nomeLista nome a ser atribuído para a lista
@@ -137,6 +120,27 @@ public class ListsController {
         entityManager.getTransaction().commit();
 
         return lista;
+    }
+
+    /**
+     * Remove todos os produtos de uma lista e logo em seguida remove a lista
+     * @param listId id da lista a ser removida
+     * @throws ListNotFoundException Exceção lançada caso lista com este id não seja encontrada
+     */
+    public void deleteList(int listId) throws ListNotFoundException {
+        ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
+
+        if (null == lista) throw new ListNotFoundException();
+
+        entityManager.getTransaction().begin();
+        lista.getGrupoDeUsuarios().getListasDeCompras().remove(lista);
+        entityManager.getTransaction().commit();
+
+        lista.setProdutos(new HashSet<>());
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(lista);
+        entityManager.getTransaction().commit();
     }
 
 }

@@ -123,7 +123,7 @@ public class ProductsController {
      * @throws ProductNotFoundException
      * @throws CategoryNotFoundException
      */
-    public void updateProduct(int idProduto, String nome, double preco, int idCategoria)
+    public Produto updateProduct(int idProduto, String nome, double preco, int idCategoria)
             throws ProductNotFoundException, CategoryNotFoundException {
         Produto produto     = entityManager.find(Produto.class, idProduto);
         Categoria categoria = entityManager.find(Categoria.class, idCategoria);
@@ -136,6 +136,8 @@ public class ProductsController {
         produto.setPreco(preco);
         produto.setCategoria(categoria);
         entityManager.getTransaction().commit();
+
+        return produto;
     }
 
     /**
@@ -147,12 +149,13 @@ public class ProductsController {
      * @throws ProductNameAlreadyInUseException
      * @throws CategoryNameAlreadyInUseException
      */
-    public void updateProduct(int idProduto, String nome, double preco, String nomeCategoria) throws ProductNotFoundException, CategoryNameAlreadyInUseException {
+    public Produto updateProduct(int idProduto, String nome, double preco, String nomeCategoria) throws ProductNotFoundException, CategoryNameAlreadyInUseException {
         try {
             Categoria categoria = AppConfig.getContext().getBean("categoriesController", CategoriesController.class).addCategory(nomeCategoria, false);
-            this.updateProduct(idProduto, nome, preco, categoria.getId());
+            return this.updateProduct(idProduto, nome, preco, categoria.getId());
         } catch (CategoryNotFoundException e) {
             // Tenho muita fé de que isso não vai acontecer
+            return null;
         }
     }
 

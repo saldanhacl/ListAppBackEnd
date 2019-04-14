@@ -76,28 +76,28 @@ public class ListsRouter {
     /**
      * Atualiza uma lista
      * Método: PUT
-     * /lists/{id}/products/
+     * /lists/{id}/products/{productId}
      * @param listId
      * @param productId
      * @throws ListNotFoundException
      */
-    @RequestMapping(value = "/{id}/products/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/products/{productId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ListaDeCompras addProduct(@PathVariable("id") int listId, int productId) throws ListNotFoundException, ProductNotFoundException, ProductAlreadyInListException {
+    public ListaDeCompras addProduct(@PathVariable("id") int listId, @PathVariable("productId") int productId) throws ListNotFoundException, ProductNotFoundException, ProductAlreadyInListException {
         return listsController.addProduct(listId, productId);
     }
 
     /**
      * Remove uma lista
      * Método: DELETE
-     * /lists/{id}/products/
+     * /lists/{id}/products/{productId}
      * @param listId
      * @param productId
      * @throws ListNotFoundException
      */
-    @RequestMapping(value = "/{id}/products/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}/products/{productId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void removeProduct(@PathVariable("id") int listId, int productId) throws ListNotFoundException, ProductNotFoundException, ProductDoesNotInListException {
+    public void removeProduct(@PathVariable("id") int listId, @PathVariable("productId") int productId) throws ListNotFoundException, ProductNotFoundException, ProductDoesNotInListException {
         listsController.removeProduct(listId, productId);
     }
 

@@ -162,7 +162,7 @@ public class CategoriesController {
      * @param nome
      * @throws CategoryNotFoundException
      */
-    public void updateCategory(int idCategoria, String nome) throws CategoryNotFoundException {
+    public Categoria updateCategory(int idCategoria, String nome) throws CategoryNotFoundException {
         Categoria categoria = entityManager.find(Categoria.class, idCategoria);
 
         if (null == categoria) throw new CategoryNotFoundException();
@@ -170,6 +170,8 @@ public class CategoriesController {
         entityManager.getTransaction().begin();
         categoria.setNome(nome);
         entityManager.getTransaction().commit();
+
+        return categoria;
     }
 
 }

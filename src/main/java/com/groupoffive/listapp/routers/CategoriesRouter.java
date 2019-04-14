@@ -30,7 +30,7 @@ public class CategoriesRouter {
         return categoriesController.getRecommendedCategories(nomeProduto);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/products", method = RequestMethod.GET)
     @ResponseBody
     public Set<Produto> getProductsFromCategory(@PathVariable("id") int categoryId) throws CategoryNotFoundException {
         return categoriesController.getProducts(categoryId);
@@ -42,16 +42,16 @@ public class CategoriesRouter {
         return categoriesController.addCategory(nome);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseBody
+    public Categoria updateCategory(@PathVariable("id") int idCategoria, String nome) throws CategoryNotFoundException {
+        return categoriesController.updateCategory(idCategoria, nome);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void removeCategory(@PathVariable("id") int idCategoria) throws CategoryNotFoundException {
         categoriesController.removeCategory(idCategoria);
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @ResponseBody
-    public void updateCategory(@PathVariable("id") int idCategoria, String nome) throws CategoryNotFoundException {
-        categoriesController.updateCategory(idCategoria, nome);
     }
 
 }

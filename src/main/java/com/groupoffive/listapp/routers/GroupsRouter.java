@@ -110,9 +110,9 @@ public class GroupsRouter {
      * @throws UserAlreadyGroupAdminException
      * @throws UserWasNotGroupAdminException
      */
-    @RequestMapping(value = "/{id}/user/", method = RequestMethod.PUT, params = {"userId", "admin"})
+    @RequestMapping(value = "/{id}/user/{userId}", method = RequestMethod.PUT, params = {"admin"})
     @ResponseBody
-    public GrupoDeUsuarios toggleUserGroupAdmin(@PathVariable("id")int groupId, int userId, boolean admin)
+    public GrupoDeUsuarios toggleUserGroupAdmin(@PathVariable("id")int groupId, @PathVariable("userId") int userId, boolean admin)
             throws UserNotFoundException, GroupNotFoundException, UserNotInGroupException, UserGroupCreatorException, UserAlreadyGroupAdminException, UserWasNotGroupAdminException {
         return groupsController.toggleUserGroupAdmin(userId, groupId, admin);
     }
@@ -150,9 +150,9 @@ public class GroupsRouter {
      * @throws UserNotFoundException
      * @throws UserNotInGroupException
      */
-    @RequestMapping(value = "/{id}/user/", method = RequestMethod.DELETE, params = {"userId"})
+    @RequestMapping(value = "/{id}/user/{userId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public GrupoDeUsuarios removeUserFromGroup(@PathVariable("id")int groupId, int userId) throws GroupNotFoundException, UserNotFoundException, UserNotInGroupException {
+    public GrupoDeUsuarios removeUserFromGroup(@PathVariable("id")int groupId, @PathVariable("userId") int userId) throws GroupNotFoundException, UserNotFoundException, UserNotInGroupException {
         return groupsController.removeUserFromGroup(userId, groupId);
     }
 

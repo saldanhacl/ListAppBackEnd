@@ -16,12 +16,6 @@ public class ProductsRouter {
         this.productsController = productsController;
     }
 
-    @RequestMapping(value = "/recommended/", method = RequestMethod.GET, params = { "nomeProduto" })
-    @ResponseBody
-    public Set<Produto> getRecommendedProducts(String nomeProduto) {
-        return productsController.getRecommendedProducts(nomeProduto);
-    }
-
     @RequestMapping(value = "/", method = RequestMethod.POST, params = { "nome", "preco", "idCategoria" })
     @ResponseBody
     public Produto addProduct(String nome, double preco, int idCategoria) throws ProductNameAlreadyInUseException, CategoryNotFoundException {
@@ -34,30 +28,36 @@ public class ProductsRouter {
         return productsController.addProduct(nome, preco, nomeCategoria);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/recommended/", method = RequestMethod.GET, params = { "nomeProduto" })
     @ResponseBody
-    public void removeProduct(@PathVariable("id") int idProduto) throws ProductNotFoundException {
-        productsController.removeProduct(idProduto);
+    public Set<Produto> getRecommendedProducts(String nomeProduto) {
+        return productsController.getRecommendedProducts(nomeProduto);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, params = { "nome", "preco", "idCategoria" })
     @ResponseBody
-    public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, int idCategoria)
+    public Produto updateProduct(@PathVariable("id") int idProduto, String nome, double preco, int idCategoria)
             throws ProductNotFoundException, CategoryNotFoundException {
-        productsController.updateProduct(idProduto, nome, preco, idCategoria);
+        return productsController.updateProduct(idProduto, nome, preco, idCategoria);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, params = { "nome", "preco", "nomeCategoria" })
     @ResponseBody
-    public void updateProduct(@PathVariable("id") int idProduto, String nome, double preco, String nomeCategoria)
+    public Produto updateProduct(@PathVariable("id") int idProduto, String nome, double preco, String nomeCategoria)
             throws ProductNotFoundException, CategoryNameAlreadyInUseException {
-        productsController.updateProduct(idProduto, nome, preco, nomeCategoria);
+        return productsController.updateProduct(idProduto, nome, preco, nomeCategoria);
     }
 
     @RequestMapping(value = "/{id}/addToList/{idLista}", method = RequestMethod.PUT)
     @ResponseBody
     public void addProductToList(@PathVariable("id") int idProduto, @PathVariable("idLista") int idLista) throws ProductNotFoundException, ListNotFoundException {
         productsController.addProductToList(idProduto, idLista);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void removeProduct(@PathVariable("id") int idProduto) throws ProductNotFoundException {
+        productsController.removeProduct(idProduto);
     }
 
 }

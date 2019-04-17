@@ -7,6 +7,7 @@ import com.groupoffive.listapp.exceptions.UserNotFoundException;
 import com.groupoffive.listapp.models.GrupoDeUsuarios;
 import com.groupoffive.listapp.models.Usuario;
 import com.groupoffive.listapp.util.Crypt;
+import com.groupoffive.listapp.util.NotificationService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -17,10 +18,12 @@ public class UsersController {
 
     private EntityManager entityManager;
     private Crypt crypt;
+    private NotificationService notificationService;
 
-    public UsersController(EntityManager entityManager, Crypt crypt) {
-        this.entityManager = entityManager;
-        this.crypt         = crypt;
+    public UsersController(EntityManager entityManager, Crypt crypt, NotificationService notificationService) {
+        this.entityManager       = entityManager;
+        this.crypt               = crypt;
+        this.notificationService = notificationService;
     }
 
     private Set<GrupoDeUsuarios> getGroupsFromUser(Usuario usuario) throws UserNotFoundException {
@@ -49,17 +52,21 @@ public class UsersController {
      *
      * @param email o email de login do usuario
      * @param senha a senha de login do usuario
+     * @param FCMToken o token utilizado para notificações
      * @return
      * @throws IncorrectEmailOrPasswordException    caso o campo de senha e/ou email nao batam com algum registro da base de dados
      */
-    public Usuario login(String email, String senha) throws IncorrectEmailOrPasswordException {
+    public Usuario login(String email, String senha, String FCMToken) throws IncorrectEmailOrPasswordException {
         String cryptedPass = crypt.cryptString(senha);
 
         try {
-            return entityManager.createQuery(
+            Usuario usuario = entityManager.createQuery(
                     "SELECT u from Usuario u WHERE u.email = :email AND u.senha = :senha", Usuario.class
             ).setParameter("email", email).setParameter("senha", cryptedPass).getSingleResult();
 
+            if (FCMToken != null) this.notificationService.persistToken(usuario, FCMToken);
+
+            return usuario;
         } catch (NoResultException e) {
             throw new IncorrectEmailOrPasswordException();
         }

@@ -20,10 +20,16 @@ public class UsersRouter {
         this.usersController = usersController;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, params = {"email", "senha"})
     @ResponseBody
     public Usuario login(String email, String senha) throws IncorrectEmailOrPasswordException {
-        return usersController.login(email, senha);
+        return usersController.login(email, senha, null);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST, params = {"email", "senha", "FCMToken"})
+    @ResponseBody
+    public Usuario login(String email, String senha, String FCMToken) throws IncorrectEmailOrPasswordException {
+        return usersController.login(email, senha, FCMToken);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

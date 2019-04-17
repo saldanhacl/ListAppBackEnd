@@ -4,6 +4,7 @@ import com.groupoffive.listapp.controllers.*;
 import com.groupoffive.listapp.routers.*;
 import com.groupoffive.listapp.util.Crypt;
 import com.groupoffive.listapp.util.CryptSha256;
+import com.groupoffive.listapp.util.FirebaseNotificationService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,7 +65,7 @@ public class AppConfig {
 
     @Bean
     UsersController usersController() {
-        return new UsersController(this.getEntityManager(), this.cryptSha256());
+        return new UsersController(this.getEntityManager(), this.cryptSha256(), this.firebaseNotificationService());
     }
 
     @Bean
@@ -75,6 +76,11 @@ public class AppConfig {
     @Bean
     ProductsController productsController() {
         return new ProductsController(this.getEntityManager());
+    }
+
+    @Bean
+    FirebaseNotificationService firebaseNotificationService() {
+        return new FirebaseNotificationService(this.getEntityManager());
     }
 
 }

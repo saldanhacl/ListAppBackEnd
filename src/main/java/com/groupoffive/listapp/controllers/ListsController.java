@@ -62,7 +62,16 @@ public class ListsController {
         produtos = lista.getProdutos();
 
         for (Produto produto : produtos) {
-            categorias.add(produto.getCategoria());
+            Categoria categoria             = produto.getCategoria();
+
+            /* Selecionando na categoria somente os produtos que pertencem à lista */
+            Set<Produto> produtosCategoria  = categoria.getProdutos();
+            Set<Produto> produtosCategoria2 = new HashSet<>();
+            for (Produto p : produtosCategoria)
+                if (p.belongsToList(lista, this.entityManager)) produtosCategoria2.add(p);
+            categoria.setProdutos(produtosCategoria2);
+
+            categorias.add(categoria);
         }
 
         return categorias;

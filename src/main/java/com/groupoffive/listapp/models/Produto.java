@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "produto")
-public class Produto {
+public class Produto /*implements Comparable<Produto>*/ {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,4 +59,27 @@ public class Produto {
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
+
+    public boolean belongsToList(ListaDeCompras lista, EntityManager entityManager) {
+        try {
+            entityManager.createQuery(
+                    "SELECT p " +
+                            "FROM Produto p " +
+                            "INNER JOIN ProdutoLista pl ON pl.produto = p " +
+                            "INNER JOIN pl.listaDeCompras l " +
+                            "WHERE p.id = :idProduto " +
+                            "AND l.id = :idLista"
+            ).setParameter("idProduto", this.getId())
+            .setParameter("idLista", lista.getId())
+            .getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+//
+//    @Override
+//    public int compareTo(Produto o) {
+//        return o.id == this.id ? 0 : -1;
+//    }
 }

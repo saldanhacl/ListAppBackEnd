@@ -1,16 +1,16 @@
-/*package com.groupoffive.listapp.models;
+package com.groupoffive.listapp.models;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.io.Serializable;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "produto_lista")
-public class ProdutoLista implements Serializable {
+public class ProdutoLista {
 
     private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @ManyToOne
     @JoinColumn(name="lista_de_compras_id")
@@ -32,4 +32,4 @@ public class ProdutoLista implements Serializable {
     public Produto getProduto() {
         return produto;
     }
-}*/
+}

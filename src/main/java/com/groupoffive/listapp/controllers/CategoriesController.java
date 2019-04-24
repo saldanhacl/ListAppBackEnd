@@ -24,8 +24,10 @@ public class CategoriesController {
      * @return
      */
     public Set<Categoria> getCategories() {
-        List<Categoria> lista = this.entityManager.createQuery("SELECT c FROM Categoria c").getResultList();
-        return new HashSet<Categoria>(lista);
+        List<Categoria> listaCategorias = this.entityManager.createQuery("SELECT c FROM Categoria c", Categoria.class).getResultList();
+        HashSet<Categoria> categorias   = new HashSet<>(listaCategorias);
+
+        return categorias;
     }
 
     /**

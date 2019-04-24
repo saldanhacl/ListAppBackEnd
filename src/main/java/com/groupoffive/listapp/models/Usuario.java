@@ -30,6 +30,9 @@ public class Usuario implements Serializable {
     private String senha;
 
     @OneToMany(mappedBy = "id.user")
+    private Set<Comentario> comentarios = new HashSet<>();
+
+    @OneToMany(mappedBy = "id.user")
     private Set<UsuarioGrupo> grupos = new HashSet<>();
 
     public Usuario() {}
@@ -68,6 +71,20 @@ public class Usuario implements Serializable {
     @JsonProperty
     public void setGrupos(Set<UsuarioGrupo> grupos) {
         this.grupos = grupos;
+    }
+
+    public void addComentario(Comentario comentario){
+        comentarios.add(comentario);
+    }
+
+    @JsonIgnore
+    public Set<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    @JsonProperty
+    public void setComentarios(Set<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
     @Override

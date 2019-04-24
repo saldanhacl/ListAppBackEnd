@@ -19,6 +19,9 @@ public class ListaDeCompras {
     @JoinColumn(name="grupo_de_usuarios_id")
     private GrupoDeUsuarios grupoDeUsuarios;
 
+    @OneToMany(mappedBy = "id.list")
+    private Set<Comentario> comentarios = new HashSet<>();
+
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "produto_lista",
@@ -68,5 +71,23 @@ public class ListaDeCompras {
     @JsonProperty
     public void setProdutos(Set<Produto> produtos) {
         this.produtos = produtos;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void addComentario(Comentario comentario){
+        comentarios.add(comentario);
+    }
+
+    @JsonIgnore
+    public Set<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    @JsonProperty
+    public void setComentarios(Set<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 }

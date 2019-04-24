@@ -1,10 +1,7 @@
 package com.groupoffive.listapp.controllers;
 
 import com.groupoffive.listapp.exceptions.*;
-import com.groupoffive.listapp.models.GrupoDeUsuarios;
-import com.groupoffive.listapp.models.Usuario;
-import com.groupoffive.listapp.models.UsuarioGrupo;
-import com.groupoffive.listapp.models.UsuarioGrupoPK;
+import com.groupoffive.listapp.models.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;

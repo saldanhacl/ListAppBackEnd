@@ -1,10 +1,7 @@
 package com.groupoffive.listapp.controllers;
 
 import com.groupoffive.listapp.exceptions.*;
-import com.groupoffive.listapp.models.Categoria;
-import com.groupoffive.listapp.models.GrupoDeUsuarios;
-import com.groupoffive.listapp.models.ListaDeCompras;
-import com.groupoffive.listapp.models.Produto;
+import com.groupoffive.listapp.models.*;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -44,6 +41,17 @@ public class ListsController {
         if (null == lista) throw new ListNotFoundException();
 
         return lista.getProdutos();
+    }
+
+    /**
+     *
+     */
+    public Set<Comentario> getComments(int listId) throws ListNotFoundException {
+        ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
+
+        if(null == lista) throw new ListNotFoundException();
+
+        return lista.getComentarios();
     }
 
     /**
@@ -112,12 +120,49 @@ public class ListsController {
     }
 
     /**
+     * Adiciona um comentario em uma lista específica por um usuário
+     * @param listId id da lista a ser atualizada
+     * @param userId id do usuario que deseja inserir um comentario
+     * @param comment comentario a ser inserido em uma lista
+     *
+     * @throws ListNotFoundException caso lista com este id não seja encontrada
+     * @throws UserNotFoundException caso o usuario solicitado nao esteja cadastrado
+     * @throws EmptyCommentException caso o comentario esteja vazio
+     * @throws UserNotInGroupException caso o usuario nao esteja inserido no respectivo grupo
+     */
+    public ListaDeCompras addComment(int listId, int userId, String comment)throws ListNotFoundException, UserNotFoundException, EmptyCommentException, UserNotInGroupException {
+            ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
+            Usuario user = entityManager.find(Usuario.class, userId);
+
+            if (null == lista) throw new ListNotFoundException();
+            if (null == user) throw new UserNotFoundException();
+            if (fieldIsEmpty(comment)) throw new EmptyCommentException();
+            if (!lista.getGrupoDeUsuarios().containsUser(user)) throw new UserNotInGroupException();
+
+        try {
+            Comentario comentario = new Comentario(lista, user, comment);
+
+            user.getComentarios().add(comentario);
+            lista.addComentario(comentario);
+
+            entityManager.getTransaction().begin();
+            entityManager.persist(comentario);
+            entityManager.getTransaction().commit();
+        }catch (Exception e){
+            if(entityManager.isOpen() || entityManager.isJoinedToTransaction()) entityManager.getTransaction().commit();
+        }
+
+        return lista;
+    }
+
+    /**
      * Altera as informações de uma lista
      * @param listId id da lista a ser atualizada
      * @param nomeLista nome a ser atribuído para a lista
+     *
      * @throws ListNotFoundException Exceção lançada caso lista com este id não seja encontrada
      */
-    public ListaDeCompras updateList(int listId, String nomeLista) throws ListNotFoundException {
+    public ListaDeCompras renameList(int listId, String nomeLista) throws ListNotFoundException {
         ListaDeCompras lista = entityManager.find(ListaDeCompras.class, listId);
 
         if (null == lista) throw new ListNotFoundException();
@@ -150,6 +195,18 @@ public class ListsController {
         entityManager.getTransaction().begin();
         entityManager.remove(lista);
         entityManager.getTransaction().commit();
+    }
+
+    /**
+     * Verifica se o campo informado está vazio.
+     *
+     * @param field_data dado de um campo especifico campo
+     * @return
+     */
+    private boolean fieldIsEmpty(String field_data){
+
+        return (field_data == null || field_data.equals("") || field_data.equals("\"\""));
+
     }
 
 }

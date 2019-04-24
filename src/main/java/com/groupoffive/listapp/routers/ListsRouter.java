@@ -3,6 +3,7 @@ package com.groupoffive.listapp.routers;
 import com.groupoffive.listapp.controllers.ListsController;
 import com.groupoffive.listapp.exceptions.*;
 import com.groupoffive.listapp.models.Categoria;
+import com.groupoffive.listapp.models.Comentario;
 import com.groupoffive.listapp.models.ListaDeCompras;
 import com.groupoffive.listapp.models.Produto;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,34 @@ public class ListsRouter {
     }
 
     /**
+     * Obtem as categorias de uma lista
+     * Método: GET
+     * /lists/{id}/comments
+     * @return
+     * @throws ListNotFoundException
+     */
+    @RequestMapping(value = "/{id}/comments", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<Comentario> getComments(@PathVariable("id") int listId) throws ListNotFoundException {
+        return listsController.getComments(listId);
+    }
+
+    /**
+     * Obtem as categorias de uma lista
+     * Método: GET
+     * /lists/{id}/categories
+     * @param userId
+     * @param comment
+     * @return
+     * @throws ListNotFoundException
+     */
+    @RequestMapping(value = "/{id}/comments", method = RequestMethod.PUT)
+    @ResponseBody
+    public ListaDeCompras addComment(@PathVariable("id") int listId, int userId, String comment)throws ListNotFoundException, UserNotFoundException, EmptyCommentException, UserNotInGroupException {
+        return listsController.addComment(listId, userId, comment);
+    }
+
+    /**
      * Atualiza uma lista
      * Método: PUT
      * /lists/{id}
@@ -69,8 +98,8 @@ public class ListsRouter {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public ListaDeCompras updateList(@PathVariable("id") int listId, String listName) throws ListNotFoundException {
-        return listsController.updateList(listId, listName);
+    public ListaDeCompras renameList(@PathVariable("id") int listId, String listName) throws ListNotFoundException {
+        return listsController.renameList(listId, listName);
     }
 
     /**
